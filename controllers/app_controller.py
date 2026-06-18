@@ -8,7 +8,9 @@ from controllers.actions import (
     handle_ui_actions,
     reset_current_case,
 )
+from controllers.maintenance import refresh_cached_subjects_if_due
 from controllers.payloads import build_ui_payloads
+from core.database import initialize_database
 from core.state import save_persisted_state
 from ui.render_ui import render_ui
 
@@ -60,6 +62,9 @@ def persist_state() -> None:
 
 
 def run_app_controller(current_screen: str) -> None:
+    initialize_database()
+    refresh_cached_subjects_if_due()
+
     if st.session_state.get("request_reset_case"):
         reset_current_case()
         persist_state()
@@ -103,6 +108,20 @@ def run_app_controller(current_screen: str) -> None:
             actions["include_historical"],
             actions["expansion_depth"],
             actions["auto_include_all_entities_initial"],
+            force_refresh=False,
+        )
+        persist_state()
+        st.rerun()
+
+    if actions.get("refresh_data"):
+        current_icos = [record.get("ico") for record in results if record.get("ico")]
+        handle_initial_analysis(
+            actions["input_text"],
+            actions["include_historical"],
+            actions["expansion_depth"],
+            actions["auto_include_all_entities_initial"],
+            force_refresh=True,
+            default_icos=current_icos,
         )
         persist_state()
         st.rerun()

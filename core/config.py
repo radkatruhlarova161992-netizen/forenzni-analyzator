@@ -2,6 +2,8 @@
 
 from pathlib import Path
 
+BASE_DIR = Path(__file__).resolve().parent.parent
+
 APP_TITLE = "Connexa"
 APP_ICON = "🔗"
 APP_LAYOUT = "wide"
@@ -30,3 +32,6 @@ PENIZE_REJSTRIK_SEARCH_URL = "https://rejstrik.penize.cz/?q={ico}"
 DETAIL_COMPANY_URL = "https://www.detail.cz/firma/{ico}"
 
 APP_STATE_PATH = Path(__file__).resolve().parent.parent / "app_state.json"
+DATABASE_PATH = BASE_DIR / "connexa.db"
+CACHE_MAX_AGE_DAYS = 30
+WEEKLY_REFRESH_INTERVAL_DAYS = 7

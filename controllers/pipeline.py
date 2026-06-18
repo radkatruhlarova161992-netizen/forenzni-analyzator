@@ -7,13 +7,24 @@ import streamlit as st
 
 from analysis.entities import fetch_company_data, normalize_entities
 from analysis.risk import calculate_risk_signals
+from core.database import save_company_record
 from core.utils import clean_ico
 
 
-def run_pipeline_for_ico(ico: str, include_historical: bool) -> dict[str, Any]:
-    source_data = fetch_company_data(ico, include_historical=include_historical)
+def run_pipeline_for_ico(
+    ico: str,
+    include_historical: bool,
+    force_refresh: bool = False,
+) -> dict[str, Any]:
+    source_data = fetch_company_data(
+        ico,
+        include_historical=include_historical,
+        force_refresh=force_refresh,
+    )
     normalized = normalize_entities(source_data)
-    return calculate_risk_signals(normalized)
+    result = calculate_risk_signals(normalized)
+    save_company_record(result)
+    return result
 
 
 def collect_related_company_icos(record: dict[str, Any]) -> list[str]:
@@ -30,6 +41,7 @@ def analyze_icos(
     include_historical: bool,
     replace: bool,
     expansion_depth: int = 1,
+    force_refresh: bool = False,
 ) -> tuple[list[dict[str, Any]], int, dict[str, int]]:
     existing_results = [] if replace else st.session_state.get("results", [])
     existing_by_ico = {record.get("ico"): record for record in existing_results}
@@ -57,7 +69,11 @@ def analyze_icos(
         status_placeholder.text(
             f"Zpracovávám IČO {ico} (hloubka {level + 1}/{max(expansion_depth, 0) + 1})"
         )
-        record = run_pipeline_for_ico(ico, include_historical=include_historical)
+        record = run_pipeline_for_ico(
+            ico,
+            include_historical=include_historical,
+            force_refresh=force_refresh,
+        )
         existing_by_ico[ico] = record
         processed_icos.append(ico)
 

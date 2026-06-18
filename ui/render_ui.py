@@ -27,6 +27,7 @@ def render_ui(
         "expansion_depth": 1,
         "auto_include_all_entities_initial": False,
         "run_cross_analysis": False,
+        "refresh_data": False,
         "cross_people_text": "",
         "cross_ico_text": "",
         "selected_people": [],

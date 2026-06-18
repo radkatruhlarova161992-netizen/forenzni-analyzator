@@ -23,6 +23,7 @@ def render_case_screen(results: list[dict[str, Any]], relationship_scope: str) -
         "expansion_depth": st.session_state.get("expansion_depth", 1),
         "auto_include_all_entities_initial": st.session_state.get("auto_include_all_entities_initial", False),
         "run_analysis": False,
+        "refresh_data": False,
         "reset_case": False,
     }
 
@@ -66,6 +67,7 @@ def render_case_screen(results: list[dict[str, Any]], relationship_scope: str) -
                     actions["expansion_depth"],
                     actions["auto_include_all_entities_initial"],
                     actions["run_analysis"],
+                    actions["refresh_data"],
                 ) = render_input_controls()
     else:
         render_landing_sections()
@@ -79,6 +81,7 @@ def render_case_screen(results: list[dict[str, Any]], relationship_scope: str) -
                 actions["expansion_depth"],
                 actions["auto_include_all_entities_initial"],
                 actions["run_analysis"],
+                actions["refresh_data"],
             ) = render_input_controls()
         with st.expander("Co to znamená?", expanded=True):
             render_meaning_section()

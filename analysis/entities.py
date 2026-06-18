@@ -2,6 +2,7 @@
 
 from typing import Any
 
+from core.database import load_cached_source_data, save_cached_source_data
 from core.utils import now_str
 from models.company import Company
 from models.person import Person
@@ -20,8 +21,19 @@ def _should_try_person_relationship_lookup(
     return bool(is_physical_person and ares_data.get("nazev") and not has_relationships)
 
 
-def fetch_company_data(ico: str, include_historical: bool = False) -> dict[str, Any]:
-    """Načte data ze všech veřejných zdrojů bez UI logiky a bez analýzy."""
+def clear_source_function_caches() -> None:
+    fetch_ares_basic.cache_clear()
+    fetch_ares_persons.cache_clear()
+    fetch_dph_status.cache_clear()
+    fetch_sbirka_listin.cache_clear()
+    fetch_justice_person_relationships.cache_clear()
+    fetch_isir_status.cache_clear()
+
+
+def _fetch_company_data_from_sources(
+    ico: str,
+    include_historical: bool = False,
+) -> dict[str, Any]:
     ares_data = fetch_ares_basic(ico)
     vr_data = fetch_ares_persons(ico, include_historical=include_historical)
     if _should_try_person_relationship_lookup(ares_data, vr_data):
@@ -45,6 +57,26 @@ def fetch_company_data(ico: str, include_historical: bool = False) -> dict[str, 
         "sbirka": sbirka_data,
         "isir": isir_data,
     }
+
+
+def fetch_company_data(
+    ico: str,
+    include_historical: bool = False,
+    force_refresh: bool = False,
+) -> dict[str, Any]:
+    """Načte data z lokální cache nebo z veřejných zdrojů bez UI logiky."""
+    if not force_refresh:
+        cached_data = load_cached_source_data(ico, include_historical)
+        if cached_data:
+            return cached_data
+
+    clear_source_function_caches()
+    source_data = _fetch_company_data_from_sources(
+        ico,
+        include_historical=include_historical,
+    )
+    save_cached_source_data(ico, include_historical, source_data)
+    return source_data
 
 
 def normalize_entities(source_data: dict[str, Any]) -> dict[str, Any]:

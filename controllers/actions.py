@@ -74,8 +74,12 @@ def handle_initial_analysis(
     include_historical: bool,
     expansion_depth: int,
     auto_include_all_entities_initial: bool,
+    force_refresh: bool = False,
+    default_icos: list[str] | None = None,
 ) -> None:
     icos = parse_ico_list(input_text)
+    if not icos and default_icos:
+        icos = default_icos
     if not icos:
         st.warning("Nezadal jsi žádné platné IČO.")
         return
@@ -87,6 +91,7 @@ def handle_initial_analysis(
         include_historical=include_historical,
         replace=True,
         expansion_depth=expansion_depth,
+        force_refresh=force_refresh,
     )
     st.session_state["last_analysis_summary"] = summary
     st.session_state["relationship_include_all_entities"] = (
@@ -99,11 +104,18 @@ def handle_initial_analysis(
         st.session_state["selected_relationship_people_names"] = sorted(
             {person["jmeno"] for person in auto_people_rows}
         )
-    st.success(
-        f"Analýza dokončena pro {len(icos)} zadaných IČO. "
-        f"Nalezeno {summary['auto_added_companies']} nových firem a "
-        f"{summary['new_people']} nových osob."
-    )
+    if force_refresh:
+        st.success(
+            f"Data byla aktualizována pro {len(icos)} IČO. "
+            f"Nalezeno {summary['auto_added_companies']} nových firem a "
+            f"{summary['new_people']} nových osob."
+        )
+    else:
+        st.success(
+            f"Analýza dokončena pro {len(icos)} zadaných IČO. "
+            f"Nalezeno {summary['auto_added_companies']} nových firem a "
+            f"{summary['new_people']} nových osob."
+        )
 
 
 def handle_ui_actions(
@@ -127,6 +139,7 @@ def handle_ui_actions(
                 include_historical=include_historical,
                 replace=False,
                 expansion_depth=st.session_state.get("expansion_depth", 1),
+                force_refresh=False,
             )
             if added_count:
                 st.success(
@@ -160,6 +173,7 @@ def handle_ui_actions(
             include_historical=include_historical,
             replace=False,
             expansion_depth=st.session_state.get("expansion_depth", 1),
+            force_refresh=False,
         )
         if added_count == 0:
             st.info("Všechna zadaná IČA už v analýze jsou.")

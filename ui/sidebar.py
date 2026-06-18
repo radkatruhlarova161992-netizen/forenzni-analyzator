@@ -162,7 +162,7 @@ def render_sources_info() -> None:
         )
 
 
-def render_input_controls() -> tuple[str, bool, int, bool, bool]:
+def render_input_controls() -> tuple[str, bool, int, bool, bool, bool]:
     input_text = st.text_area(
         "IČO k analýze",
         height=96,
@@ -199,9 +199,11 @@ def render_input_controls() -> tuple[str, bool, int, bool, bool]:
         key="auto_include_all_entities_initial",
     )
 
-    col1, _ = st.columns([1, 4])
+    col1, col2, _ = st.columns([1, 1, 3])
     with col1:
         run_analysis = st.button("Spustit analýzu", type="primary", use_container_width=True)
+    with col2:
+        refresh_data = st.button("Aktualizovat data", use_container_width=True)
 
     return (
         input_text,
@@ -209,4 +211,5 @@ def render_input_controls() -> tuple[str, bool, int, bool, bool]:
         expansion_depth,
         auto_include_all_entities_initial,
         run_analysis,
+        refresh_data,
     )
