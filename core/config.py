@@ -2,7 +2,7 @@
 
 from pathlib import Path
 
-APP_TITLE = "Firmograf"
+APP_TITLE = "Connexa"
 APP_ICON = "🔗"
 APP_LAYOUT = "wide"
 

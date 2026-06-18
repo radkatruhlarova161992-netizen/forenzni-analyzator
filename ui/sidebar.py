@@ -45,20 +45,20 @@ def render_header() -> None:
     st.markdown(
         """
         <style>
-        .firmograf-hero {padding: 0.25rem 0 0.5rem 0;}
-        .firmograf-kicker {font-size: 2rem; font-weight: 700; color: #1E3A5F; line-height: 1.1; margin: 0;}
-        .firmograf-subtitle {font-size: 1rem; font-weight: 600; color: #2563EB; margin: 0.15rem 0 0.35rem 0;}
-        .firmograf-copy {font-size: 1rem; color: #334155; margin: 0;}
+        .connexa-hero {padding: 0.25rem 0 0.5rem 0;}
+        .connexa-kicker {font-size: 2rem; font-weight: 700; color: #1E3A5F; line-height: 1.1; margin: 0;}
+        .connexa-subtitle {font-size: 1rem; font-weight: 600; color: #2563EB; margin: 0.15rem 0 0.35rem 0;}
+        .connexa-copy {font-size: 1rem; color: #334155; margin: 0;}
         @media (max-width: 640px) {
-          .firmograf-kicker {font-size: 1.65rem;}
-          .firmograf-subtitle {font-size: 0.95rem;}
-          .firmograf-copy {font-size: 0.95rem;}
+          .connexa-kicker {font-size: 1.65rem;}
+          .connexa-subtitle {font-size: 0.95rem;}
+          .connexa-copy {font-size: 0.95rem;}
         }
         </style>
-        <div class="firmograf-hero">
-          <div class="firmograf-kicker">🔗 Firmograf</div>
-          <div class="firmograf-subtitle">Analýza firemních vazeb a propojení</div>
-          <div class="firmograf-copy">Objevte vazby mezi firmami, osobami a adresami během několika sekund.</div>
+        <div class="connexa-hero">
+          <div class="connexa-kicker">🔗 Connexa</div>
+          <div class="connexa-subtitle">Analýza firemních vazeb a propojení</div>
+          <div class="connexa-copy">Objevte vazby mezi firmami, osobami a adresami během několika sekund.</div>
         </div>
         """,
         unsafe_allow_html=True,
@@ -67,7 +67,7 @@ def render_header() -> None:
 
 def render_app_navigation(results: list[dict[str, Any]]) -> str:
     with st.sidebar:
-        st.markdown("## Firmograf")
+        st.markdown("## Connexa")
         current_screen = st.radio(
             "Navigace",
             options=["📊 Přehled", "🏢 Firmy", "👤 Osoby", "🕸 Vazby", "🔗 Graf vazeb", "⚠️ Rizika"],

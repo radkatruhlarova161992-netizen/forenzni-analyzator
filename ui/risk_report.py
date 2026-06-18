@@ -94,25 +94,25 @@ def render_landing_sections() -> None:
     st.markdown(
         """
         <style>
-        .firmograf-grid {
+        .connexa-grid {
             display:grid;
             grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
             gap: 14px;
             margin: 0.35rem 0 0.8rem 0;
         }
-        .firmograf-card {
+        .connexa-card {
             background: #F8FAFC;
             border: 1px solid #E2E8F0;
             border-radius: 10px;
             padding: 14px 16px;
         }
-        .firmograf-card-title {
+        .connexa-card-title {
             font-size: 1rem;
             font-weight: 700;
             color: #1E3A5F;
             margin-bottom: 10px;
         }
-        .firmograf-step, .firmograf-capability {
+        .connexa-step, .connexa-capability {
             display:flex;
             align-items:flex-start;
             gap:10px;
@@ -120,27 +120,27 @@ def render_landing_sections() -> None:
             margin: 0 0 10px 0;
             line-height:1.35;
         }
-        .firmograf-step:last-child, .firmograf-capability:last-child {margin-bottom:0;}
-        .firmograf-icon {
+        .connexa-step:last-child, .connexa-capability:last-child {margin-bottom:0;}
+        .connexa-icon {
             min-width: 26px;
             font-size: 1rem;
             line-height: 1.3;
         }
         </style>
-        <div class="firmograf-grid">
-          <div class="firmograf-card">
-            <div class="firmograf-card-title">🧭 Jak to funguje</div>
-            <div class="firmograf-step"><span class="firmograf-icon">1️⃣</span><span>Zadejte IČO</span></div>
-            <div class="firmograf-step"><span class="firmograf-icon">2️⃣</span><span>Spusťte analýzu</span></div>
-            <div class="firmograf-step"><span class="firmograf-icon">3️⃣</span><span>Prozkoumejte firmy, osoby a vazby</span></div>
+        <div class="connexa-grid">
+          <div class="connexa-card">
+            <div class="connexa-card-title">🧭 Jak to funguje</div>
+            <div class="connexa-step"><span class="connexa-icon">1️⃣</span><span>Zadejte IČO</span></div>
+            <div class="connexa-step"><span class="connexa-icon">2️⃣</span><span>Spusťte analýzu</span></div>
+            <div class="connexa-step"><span class="connexa-icon">3️⃣</span><span>Prozkoumejte firmy, osoby a vazby</span></div>
           </div>
-          <div class="firmograf-card">
-            <div class="firmograf-card-title">✨ Co aplikace umí</div>
-            <div class="firmograf-capability"><span class="firmograf-icon">👤</span><span>Osoby</span></div>
-            <div class="firmograf-capability"><span class="firmograf-icon">🏢</span><span>Firmy</span></div>
-            <div class="firmograf-capability"><span class="firmograf-icon">🕸</span><span>Vazby</span></div>
-            <div class="firmograf-capability"><span class="firmograf-icon">📍</span><span>Adresy</span></div>
-            <div class="firmograf-capability"><span class="firmograf-icon">⚠️</span><span>Rizikové signály</span></div>
+          <div class="connexa-card">
+            <div class="connexa-card-title">✨ Co aplikace umí</div>
+            <div class="connexa-capability"><span class="connexa-icon">👤</span><span>Osoby</span></div>
+            <div class="connexa-capability"><span class="connexa-icon">🏢</span><span>Firmy</span></div>
+            <div class="connexa-capability"><span class="connexa-icon">🕸</span><span>Vazby</span></div>
+            <div class="connexa-capability"><span class="connexa-icon">📍</span><span>Adresy</span></div>
+            <div class="connexa-capability"><span class="connexa-icon">⚠️</span><span>Rizikové signály</span></div>
           </div>
         </div>
         """,
