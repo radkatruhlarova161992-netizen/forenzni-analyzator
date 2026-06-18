@@ -2,8 +2,8 @@
 
 from pathlib import Path
 
-APP_TITLE = "Forenzní analyzátor firemních struktur"
-APP_ICON = "🔎"
+APP_TITLE = "Firmograf"
+APP_ICON = "🔗"
 APP_LAYOUT = "wide"
 
 REQUEST_TIMEOUT = 12

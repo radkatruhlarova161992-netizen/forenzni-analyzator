@@ -46,7 +46,7 @@ def render_case_screen(results: list[dict[str, Any]], relationship_scope: str) -
         with st.expander("Vysvětlení pojmů", expanded=False):
             render_term_tooltips()
         render_navigation_buttons()
-        with st.expander("Technické detaily", expanded=False):
+        with st.expander("Podrobnosti a zdroje", expanded=False):
             actions["compare_all_entities"] = render_summary_tab(
                 results,
                 relationship_scope,
@@ -57,7 +57,7 @@ def render_case_screen(results: list[dict[str, Any]], relationship_scope: str) -
         with st.expander("Spustit novou analýzu", expanded=False):
             with st.container(border=True):
                 st.markdown("### Nová analýza")
-                st.caption("Vlož IČA a spusť kontrolu.")
+                st.caption("Vlož IČA a spusť analýzu.")
                 (
                     actions["input_text"],
                     actions["include_historical"],
@@ -68,7 +68,7 @@ def render_case_screen(results: list[dict[str, Any]], relationship_scope: str) -
     else:
         with st.container(border=True):
             st.markdown("### Nová analýza")
-            st.caption("Vlož IČA a spusť kontrolu.")
+            st.caption("Vlož IČA a spusť analýzu.")
             (
                 actions["input_text"],
                 actions["include_historical"],
@@ -222,7 +222,7 @@ def render_summary_tab(
     show_header: bool = True,
 ) -> bool:
     if show_header:
-        st.subheader("Technické detaily")
+        st.subheader("Podrobnosti a zdroje")
     current_ico_block = "\n".join(rec.get("ico") for rec in results if rec.get("ico"))
     st.markdown("**Načtená IČA**")
     st.text_area(

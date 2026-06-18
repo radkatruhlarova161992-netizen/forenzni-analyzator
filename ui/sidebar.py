@@ -33,17 +33,22 @@ def initialize_session_state(persisted_state: dict[str, Any]) -> None:
 
 
 def render_header() -> None:
-    st.title("🔎 Forenzní analyzátor firemních struktur")
+    st.title("🔗 Firmograf")
+    st.subheader("Analýza firemních vazeb a propojení")
     st.caption(
-        "Nástroj pro shromáždění veřejně dostupných faktů o českých firmách. "
-        "Výstupy jsou ověřitelné rizikové signály se zdroji – nikoli obvinění "
-        "ani závěry o konkrétních osobách."
+        "Objevte vazby mezi firmami, osobami a adresami během několika sekund."
     )
+    with st.expander("Jak to funguje", expanded=True):
+        st.markdown(
+            "1. Zadejte IČO\n"
+            "2. Spusťte analýzu\n"
+            "3. Projděte firmy, osoby, vazby a rizikové signály"
+        )
 
 
 def render_app_navigation(results: list[dict[str, Any]]) -> str:
     with st.sidebar:
-        st.markdown("## Analýza")
+        st.markdown("## Firmograf")
         current_screen = st.radio(
             "Navigace",
             options=["📊 Přehled", "🏢 Firmy", "👤 Osoby", "🕸 Vazby", "⚠️ Rizika"],
@@ -74,18 +79,14 @@ def render_app_navigation(results: list[dict[str, Any]]) -> str:
 
 
 def render_sources_info() -> None:
-    with st.expander("ℹ️ O zdrojích dat a omezeních", expanded=False):
+    with st.expander("ℹ️ Zdroje a omezení", expanded=False):
         st.markdown(
             """
-        - **ARES** – plně automatizované REST API (základní údaje, statutární orgány).
-        - **Registr DPH (ADIS)** – reálné SOAP volání na rozhraní Finanční správy.
-        - **Kurzy.cz – Obchodní rejstřík firem** – používáme jako doplňkový zdroj
-          pro přímé odkazy na dohledání dalších vazeb podle firmy nebo osoby.
-        - **Sbírka listin (Justice.cz)** a **Insolvenční rejstřík (ISIR)** – tyto
-          registry nemají veřejné bezplatné API pro hromadné strojové dotazy.
-          Aplikace se pokusí o automatické ověření; pokud to nejde, **vždy nabídne
-          přímý odkaz pro rychlou ruční kontrolu** – nikdy si data nevymýšlí.
-        - Žádný požadavek neobchází CAPTCHA, login ani robots.txt.
+        - **ARES** – základní údaje o firmě a orgánech.
+        - **Registr DPH (ADIS)** – veřejný zdroj pro ověření DPH stavu.
+        - **Kurzy.cz** – doplňkové odkazy pro další ruční kontrolu vazeb.
+        - **Justice.cz** a **ISIR** – když nejde údaj načíst spolehlivě, aplikace nabídne přímý odkaz.
+        - Aplikace si údaje nevymýšlí a neobchází captcha ani přihlášení.
         """
         )
 
