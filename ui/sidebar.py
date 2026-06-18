@@ -34,6 +34,18 @@ DEFAULT_SESSION_STATE: dict[str, Any] = {
     "request_reset_case": False,
 }
 
+EXPANSION_DEPTH_LABELS = {
+    1: "Přímé vazby",
+    2: "Rozšířené vazby",
+    3: "Kompletní síť",
+}
+
+EXPANSION_DEPTH_DESCRIPTIONS = {
+    1: "Analyzuje pouze zadaný subjekt a jeho přímé osoby, adresy a rizika.",
+    2: "Analyzuje zadaný subjekt, dohledává další firmy nalezených osob a ukazuje společné osoby a adresy.",
+    3: "Pokračuje i přes další nalezené firmy a vytváří víceúrovňovou síť pro odhalení nepřímých vazeb.",
+}
+
 
 def initialize_session_state(persisted_state: dict[str, Any]) -> None:
     for key, default_value in DEFAULT_SESSION_STATE.items():
@@ -170,20 +182,17 @@ def render_input_controls() -> tuple[str, bool, int, bool, bool]:
     )
     include_historical = relationship_scope == "Aktuální i historické"
     expansion_depth = st.selectbox(
-        "Automatické rozšíření sítě",
+        "Rozsah analýzy",
         options=[1, 2, 3],
-        format_func=lambda value: f"Hloubka {value}",
+        format_func=lambda value: EXPANSION_DEPTH_LABELS[value],
         key="expansion_depth",
         help=(
-            "Hloubka 1 hledá přímo navázané subjekty. "
-            "Hloubka 2 přidá navazující firmy o krok dál. "
-            "Hloubka 3 prohledá ještě jednu další úroveň."
+            "Vyberte, jak daleko má Connexa pokračovat při dohledávání dalších firem a vazeb."
         ),
     )
     st.caption(
-        "Hloubka 1: jen přímo navázané firmy. "
-        "Hloubka 2: i firmy navázané na již nalezené subjekty. "
-        "Hloubka 3: ještě o jednu úroveň dál pro širší síť vazeb."
+        f"**{EXPANSION_DEPTH_LABELS[expansion_depth]}**: "
+        f"{EXPANSION_DEPTH_DESCRIPTIONS[expansion_depth]}"
     )
     auto_include_all_entities_initial = st.checkbox(
         "Pro vazby osob a firem vyber všechny osoby i firmy spojené s firmou",
