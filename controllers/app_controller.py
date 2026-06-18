@@ -60,6 +60,11 @@ def persist_state() -> None:
 
 
 def run_app_controller(current_screen: str) -> None:
+    if st.session_state.get("request_reset_case"):
+        reset_current_case()
+        persist_state()
+        st.rerun()
+
     include_historical = (
         st.session_state.get("relationship_scope") == "Aktuální i historické"
     )
@@ -91,11 +96,6 @@ def run_app_controller(current_screen: str) -> None:
         payloads["cross_analysis_payload"],
         payloads["selected_people_payload"],
     )
-
-    if st.session_state.get("request_reset_case"):
-        reset_current_case()
-        persist_state()
-        st.rerun()
 
     if actions["run_analysis"]:
         handle_initial_analysis(
