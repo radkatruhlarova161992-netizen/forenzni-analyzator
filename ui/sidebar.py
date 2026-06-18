@@ -33,17 +33,27 @@ def initialize_session_state(persisted_state: dict[str, Any]) -> None:
 
 
 def render_header() -> None:
-    st.title("🔗 Firmograf")
-    st.subheader("Analýza firemních vazeb a propojení")
-    st.caption(
-        "Objevte vazby mezi firmami, osobami a adresami během několika sekund."
+    st.markdown(
+        """
+        <style>
+        .firmograf-hero {padding: 0.25rem 0 0.5rem 0;}
+        .firmograf-kicker {font-size: 2rem; font-weight: 700; color: #1E3A5F; line-height: 1.1; margin: 0;}
+        .firmograf-subtitle {font-size: 1rem; font-weight: 600; color: #2563EB; margin: 0.15rem 0 0.35rem 0;}
+        .firmograf-copy {font-size: 1rem; color: #334155; margin: 0;}
+        @media (max-width: 640px) {
+          .firmograf-kicker {font-size: 1.65rem;}
+          .firmograf-subtitle {font-size: 0.95rem;}
+          .firmograf-copy {font-size: 0.95rem;}
+        }
+        </style>
+        <div class="firmograf-hero">
+          <div class="firmograf-kicker">🔗 Firmograf</div>
+          <div class="firmograf-subtitle">Analýza firemních vazeb a propojení</div>
+          <div class="firmograf-copy">Objevte vazby mezi firmami, osobami a adresami během několika sekund.</div>
+        </div>
+        """,
+        unsafe_allow_html=True,
     )
-    with st.expander("Jak to funguje", expanded=True):
-        st.markdown(
-            "1. Zadejte IČO\n"
-            "2. Spusťte analýzu\n"
-            "3. Projděte firmy, osoby, vazby a rizikové signály"
-        )
 
 
 def render_app_navigation(results: list[dict[str, Any]]) -> str:

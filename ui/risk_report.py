@@ -66,6 +66,7 @@ def render_case_screen(results: list[dict[str, Any]], relationship_scope: str) -
                     actions["run_analysis"],
                 ) = render_input_controls()
     else:
+        render_landing_sections()
         with st.container(border=True):
             st.markdown("### Nová analýza")
             st.caption("Vlož IČA a spusť analýzu.")
@@ -84,6 +85,64 @@ def render_case_screen(results: list[dict[str, Any]], relationship_scope: str) -
             render_term_tooltips()
 
     return actions
+
+
+def render_landing_sections() -> None:
+    st.markdown(
+        """
+        <style>
+        .firmograf-grid {
+            display:grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 14px;
+            margin: 0.35rem 0 0.8rem 0;
+        }
+        .firmograf-card {
+            background: #F8FAFC;
+            border: 1px solid #E2E8F0;
+            border-radius: 10px;
+            padding: 14px 16px;
+        }
+        .firmograf-card-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #1E3A5F;
+            margin-bottom: 10px;
+        }
+        .firmograf-step, .firmograf-capability {
+            display:flex;
+            align-items:flex-start;
+            gap:10px;
+            color:#0F172A;
+            margin: 0 0 10px 0;
+            line-height:1.35;
+        }
+        .firmograf-step:last-child, .firmograf-capability:last-child {margin-bottom:0;}
+        .firmograf-icon {
+            min-width: 26px;
+            font-size: 1rem;
+            line-height: 1.3;
+        }
+        </style>
+        <div class="firmograf-grid">
+          <div class="firmograf-card">
+            <div class="firmograf-card-title">Jak to funguje</div>
+            <div class="firmograf-step"><span class="firmograf-icon">1️⃣</span><span>Zadejte IČO</span></div>
+            <div class="firmograf-step"><span class="firmograf-icon">2️⃣</span><span>Spusťte analýzu</span></div>
+            <div class="firmograf-step"><span class="firmograf-icon">3️⃣</span><span>Prozkoumejte firmy, osoby a vazby</span></div>
+          </div>
+          <div class="firmograf-card">
+            <div class="firmograf-card-title">Co aplikace umí</div>
+            <div class="firmograf-capability"><span class="firmograf-icon">✅</span><span>Propojené firmy</span></div>
+            <div class="firmograf-capability"><span class="firmograf-icon">✅</span><span>Společné osoby</span></div>
+            <div class="firmograf-capability"><span class="firmograf-icon">✅</span><span>Společné adresy</span></div>
+            <div class="firmograf-capability"><span class="firmograf-icon">✅</span><span>Historické vazby</span></div>
+            <div class="firmograf-capability"><span class="firmograf-icon">✅</span><span>Rizikové signály</span></div>
+          </div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
 
 
 def render_dashboard(results: list[dict[str, Any]]) -> None:
