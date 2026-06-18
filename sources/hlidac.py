@@ -8,6 +8,7 @@ import requests
 
 from core.config import HEADERS, HLIDAC_SUBJEKT_URL, REQUEST_TIMEOUT
 from core.utils import format_role_status
+from sources.justice import find_ico_by_company_name
 
 HLIDAC_VAZBY_URL = "https://www.hlidacstatu.cz/subjekt/Vazby/{ico}"
 HLIDAC_VAZBY_OSOBY_URL = "https://www.hlidacstatu.cz/subjekt/VazbyOsoby/{ico}"
@@ -141,10 +142,11 @@ def fetch_hlidac_relationships(ico: str, include_historical: bool = False) -> di
             if not include_historical and not is_current:
                 historical_companies_found = True
                 continue
+            resolved_ico = find_ico_by_company_name(company_name)
             companies_rows.append(
                 {
                     "firma": company_name,
-                    "ico": None,
+                    "ico": resolved_ico,
                     "role": _strip_tags(match.group("role")),
                     "od": start_date,
                     "do": end_date,
