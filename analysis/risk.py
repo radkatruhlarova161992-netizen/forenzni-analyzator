@@ -33,15 +33,6 @@ def evaluate_risk_flags(record: dict[str, Any]) -> list[dict[str, str | None]]:
             }
         )
 
-    if record.get("isir_status") in ("vyzaduje_rucni_kontrolu", "castecny_vysledek"):
-        flags.append(
-            {
-                "signal": "Insolvenční rejstřík nelze automaticky vyhodnotit – nutná ruční kontrola",
-                "jistota": "neověřené – vyžaduje ruční kontrolu",
-                "zdroj": record.get("link_isir"),
-            }
-        )
-
     if record.get("sbirka_status") in ("failed", "error", "nenalezeno", "timeout"):
         flags.append(
             {
