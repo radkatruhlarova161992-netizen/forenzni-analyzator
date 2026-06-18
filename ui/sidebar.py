@@ -134,6 +134,11 @@ def render_input_controls() -> tuple[str, bool, int, bool, bool]:
             "Hloubka 3 prohledá ještě jednu další úroveň."
         ),
     )
+    st.caption(
+        "Hloubka 1: jen přímo navázané firmy. "
+        "Hloubka 2: i firmy navázané na již nalezené subjekty. "
+        "Hloubka 3: ještě o jednu úroveň dál pro širší síť vazeb."
+    )
     auto_include_all_entities_initial = st.checkbox(
         "Pro vazby osob a firem vyber všechny osoby i firmy spojené s firmou",
         key="auto_include_all_entities_initial",
