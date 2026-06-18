@@ -19,10 +19,14 @@ def persist_state() -> None:
             "relationship_scope": st.session_state.get(
                 "relationship_scope", "Jen aktuální"
             ),
+            "expansion_depth": st.session_state.get("expansion_depth", 1),
             "auto_include_all_entities_initial": st.session_state.get(
                 "auto_include_all_entities_initial", False
             ),
             "results": st.session_state.get("results", []),
+            "last_analysis_summary": st.session_state.get(
+                "last_analysis_summary", None
+            ),
             "selected_relationship_people_names": st.session_state.get(
                 "selected_relationship_people_names", []
             ),
@@ -91,6 +95,7 @@ def run_app_controller(current_screen: str) -> None:
         handle_initial_analysis(
             actions["input_text"],
             actions["include_historical"],
+            actions["expansion_depth"],
             actions["auto_include_all_entities_initial"],
         )
         persist_state()

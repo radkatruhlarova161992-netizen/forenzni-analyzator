@@ -7,8 +7,10 @@ import streamlit as st
 DEFAULT_SESSION_STATE: dict[str, Any] = {
     "input_text": "",
     "relationship_scope": "Jen aktuální",
+    "expansion_depth": 1,
     "auto_include_all_entities_initial": False,
     "results": [],
+    "last_analysis_summary": None,
     "selected_relationship_people_names": [],
     "selected_relationship_people_rows": [],
     "relationship_include_all_entities": False,
@@ -88,11 +90,11 @@ def render_sources_info() -> None:
         )
 
 
-def render_input_controls() -> tuple[str, bool, bool, bool]:
+def render_input_controls() -> tuple[str, bool, int, bool, bool]:
     input_text = st.text_area(
         "Zadejte IČO (oddělené čárkou nebo novým řádkem)",
         height=120,
-        placeholder="04808100, 27604977\nnebo na nový řádek pro každé IČO",
+        placeholder="12345678\n87654321",
         key="input_text",
     )
 
@@ -103,6 +105,12 @@ def render_input_controls() -> tuple[str, bool, bool, bool]:
         key="relationship_scope",
     )
     include_historical = relationship_scope == "Aktuální i historické"
+    expansion_depth = st.selectbox(
+        "Automatické rozšíření sítě",
+        options=[1, 2, 3],
+        format_func=lambda value: f"Hloubka {value}",
+        key="expansion_depth",
+    )
     auto_include_all_entities_initial = st.checkbox(
         "Pro vazby osob a firem vyber všechny osoby i firmy spojené s firmou",
         key="auto_include_all_entities_initial",
@@ -112,4 +120,10 @@ def render_input_controls() -> tuple[str, bool, bool, bool]:
     with col1:
         run_analysis = st.button("🚀 Spustit analýzu", type="primary", use_container_width=True)
 
-    return input_text, include_historical, auto_include_all_entities_initial, run_analysis
+    return (
+        input_text,
+        include_historical,
+        expansion_depth,
+        auto_include_all_entities_initial,
+        run_analysis,
+    )

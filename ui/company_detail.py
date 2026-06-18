@@ -7,6 +7,13 @@ import streamlit as st
 
 from core.config import JUSTICE_VYPIS_URL
 from core.utils import format_kurzy_search_link
+from ui.explainers import (
+    render_key_findings_intro,
+    render_meaning_section,
+    render_next_steps_section,
+    render_term_tooltips,
+    tooltip_term,
+)
 
 
 def render_companies_screen(
@@ -14,7 +21,14 @@ def render_companies_screen(
     include_historical: bool,
 ) -> None:
     st.subheader("Firmy")
-    st.caption("Přehled načtených subjektů a jejich základních vazeb.")
+    render_key_findings_intro(results)
+    st.caption("Přehled firem a základních vazeb.")
+    with st.expander("Co to znamená?", expanded=True):
+        render_meaning_section()
+    with st.expander("Doporučené další kroky", expanded=True):
+        render_next_steps_section()
+    with st.expander("Vysvětlení pojmů", expanded=False):
+        render_term_tooltips()
 
     company_rows = []
     for record in results:
@@ -44,7 +58,14 @@ def render_people_screen(
     include_historical: bool,
 ) -> tuple[list[dict[str, Any]], bool]:
     st.subheader("Osoby")
-    st.caption("Osoby nalezené napříč firmami. Opakující se osoby jsou zvýrazněné.")
+    render_key_findings_intro(results)
+    st.caption("Osoby nalezené napříč firmami. Opakování je zvýrazněné.")
+    with st.expander("Co to znamená?", expanded=True):
+        render_meaning_section()
+    with st.expander("Doporučené další kroky", expanded=False):
+        render_next_steps_section()
+    with st.expander("Vysvětlení pojmů", expanded=False):
+        render_term_tooltips()
 
     selected_people = render_people_selection(results, include_historical)
     run_selected_people_relationships = st.button(
@@ -141,20 +162,33 @@ def render_company_detail_section(
             c1, c2 = st.columns(2)
 
             with c1:
-                st.markdown("**Základní údaje (ARES)**")
+                st.markdown("**Základní údaje**")
                 st.write(f"Sídlo: {record.get('sidlo_raw') or record.get('sidlo') or '—'}")
                 st.write(f"Právní forma: {record.get('pravni_forma') or '—'}")
                 st.write(f"Datum vzniku: {record.get('datum_vzniku') or '—'}")
                 st.write(f"Datum zániku: {record.get('datum_zaniku') or '—'}")
                 if record.get("ares_status") != "ok":
-                    st.warning(f"ARES: {record.get('ares_chyba') or record.get('ares_status')}")
+                    st.warning(f"Zdroj ARES: {record.get('ares_chyba') or record.get('ares_status')}")
+                if record.get("fallback_lookup_found"):
+                    st.info(
+                        "Firma nebyla nalezena v primárním zdroji, ale byla dohledána přes "
+                        f"{record.get('fallback_lookup_source_name')}. Údaje doporučujeme ověřit ručně."
+                    )
+                    if record.get("fallback_lookup_source_url"):
+                        st.markdown(
+                            f"[🔗 Zdroj fallbacku – {record.get('fallback_lookup_source_name')}]"
+                            f"({record.get('fallback_lookup_source_url')})"
+                        )
                 st.markdown(f"[🔗 Zdroj – ARES]({record.get('zdroj_ares')})")
 
             with c2:
-                st.markdown("**Rizikové signály**")
+                st.markdown(
+                    f"**{tooltip_term('rizikový signál')}**",
+                    unsafe_allow_html=True,
+                )
                 flags = record.get("risk_flags", [])
                 if not flags:
-                    st.write("Žádné automaticky zjištěné rizikové signály.")
+                    st.write("Zatím nebyl zachycen žádný výrazný signál.")
                 for flag in flags:
                     st.markdown(f"- **{flag['signal']}**")
                     st.caption(
@@ -170,7 +204,11 @@ def render_company_detail_section(
                 st.dataframe(pd.DataFrame(osoby), use_container_width=True)
                 helper_col, toggle_col = st.columns([4, 1])
                 with helper_col:
-                    st.caption("Zaklikni osoby, které chceš použít pro hledání vazeb.")
+                    st.markdown(
+                        f"Vyber osoby pro další hledání vazeb. Nejčastěji jde o "
+                        f"{tooltip_term('jednatel')}e nebo {tooltip_term('společník')}y.",
+                        unsafe_allow_html=True,
+                    )
                 with toggle_col:
                     select_all_people = st.checkbox(
                         "Vybrat všechny",
@@ -203,23 +241,23 @@ def render_company_detail_section(
             else:
                 vr_status = record.get("vr_status")
                 if vr_status == "ok":
-                    st.write("Žádné osoby nebyly v rejstříku dohledány.")
+                    st.write("Ve zdroji nebyly dohledány žádné osoby.")
                 else:
                     st.info(
-                        f"Osoby nelze automaticky dohledat ({record.get('vr_chyba') or vr_status}). "
-                        f"Zkontroluj ručně: [Veřejný rejstřík]({JUSTICE_VYPIS_URL.format(ico=record.get('ico'))})"
+                        f"Osoby se nepodařilo automaticky dohledat. "
+                        f"Ověř ručně: [Veřejný rejstřík]({JUSTICE_VYPIS_URL.format(ico=record.get('ico'))})"
                     )
 
             st.markdown("---")
-            st.markdown("**Navázané firmy dohledané přes ARES VR**")
+            st.markdown("**Navázané firmy**")
             navazane_firmy = record.get("navazane_firmy", [])
             if navazane_firmy:
                 st.dataframe(pd.DataFrame(navazane_firmy), use_container_width=True)
             else:
-                st.write("Žádné další navázané právnické osoby se nepodařilo automaticky vyčíst.")
+                st.write("Žádné další navázané firmy se nepodařilo vyčíst.")
 
             st.markdown("---")
-            st.markdown("**Další dohledání vazeb přes Kurzy.cz**")
+            st.markdown("**Další odkazy**")
             st.markdown(
                 f"- 🔎 Firma v Kurzy.cz: "
                 f"[vyhledat {record.get('ico')}]({format_kurzy_search_link(record.get('ico'), not include_historical)})"
@@ -232,7 +270,7 @@ def render_company_detail_section(
                     )
 
             st.markdown("---")
-            st.markdown("**Externí ověření (doporučeno zkontrolovat ručně)**")
+            st.markdown("**Ruční ověření**")
             st.markdown(
                 f"- 📄 Sbírka listin: [{record.get('link_sbirka_listin')}]({record.get('link_sbirka_listin')})"
             )
@@ -240,15 +278,32 @@ def render_company_detail_section(
                 f"- ⚖️ Insolvenční rejstřík: [{record.get('link_isir')}]({record.get('link_isir')})"
             )
             if record.get("ares_status") == "nenalezeno_v_ares":
-                st.markdown(
-                    f"- 🔎 Justice.cz fallback: "
-                    f"[{record.get('fallback_lookup_justice')}]({record.get('fallback_lookup_justice')})"
-                )
-                st.markdown(
-                    f"- 🔎 Kurzy.cz fallback: "
-                    f"[{record.get('fallback_lookup_kurzy')}]({record.get('fallback_lookup_kurzy')})"
-                )
-                st.caption(record.get("fallback_lookup_note"))
+                if record.get("fallback_lookup_found"):
+                    st.caption(record.get("fallback_lookup_note"))
+                else:
+                    st.warning("Subjekt se nepodařilo automaticky dohledat. Ověřte ručně.")
+                    st.markdown(
+                        f"- 🔎 ARES: "
+                        f"[{record.get('zdroj_ares')}]({record.get('zdroj_ares')})"
+                    )
+                    st.markdown(
+                        f"- 🔎 Justice: "
+                        f"[{record.get('fallback_lookup_justice')}]({record.get('fallback_lookup_justice')})"
+                    )
+                    if record.get("fallback_lookup_hlidac"):
+                        st.markdown(
+                            f"- 🔎 Hlídač státu: "
+                            f"[{record.get('fallback_lookup_hlidac')}]({record.get('fallback_lookup_hlidac')})"
+                        )
+                    st.markdown(
+                        f"- 🔎 Kurzy.cz: "
+                        f"[{record.get('fallback_lookup_kurzy')}]({record.get('fallback_lookup_kurzy')})"
+                    )
+                    for attempt in record.get("fallback_lookup_attempts", []):
+                        if attempt.get("status") == "failed" and attempt.get("error"):
+                            st.caption(
+                                f"{attempt.get('source_name')}: {attempt.get('error')}"
+                            )
             if record.get("isir_chyba"):
                 st.caption(f"Poznámka ISIR: {record.get('isir_chyba')}")
             if record.get("sbirka_chyba"):

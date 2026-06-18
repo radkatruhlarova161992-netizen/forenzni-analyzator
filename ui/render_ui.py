@@ -23,6 +23,7 @@ def render_ui(
         "run_analysis": False,
         "input_text": "",
         "include_historical": False,
+        "expansion_depth": 1,
         "auto_include_all_entities_initial": False,
         "run_cross_analysis": False,
         "cross_people_text": "",

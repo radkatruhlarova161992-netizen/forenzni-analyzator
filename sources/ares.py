@@ -7,6 +7,7 @@ import requests
 
 from core.config import ARES_URL, ARES_VR_URL, HEADERS, JUSTICE_VYPIS_URL, REQUEST_TIMEOUT
 from core.utils import clean_ico, format_kurzy_search_link, format_role_status
+from sources.company_lookup import find_company_by_ico
 from sources.kurzy import build_fallback_sources_for_ico
 
 
@@ -148,6 +149,11 @@ def fetch_ares_basic(ico: str) -> dict[str, Any]:
         "fallback_lookup_note": None,
         "fallback_lookup_justice": JUSTICE_VYPIS_URL.format(ico=ico),
         "fallback_lookup_kurzy": format_kurzy_search_link(ico, True),
+        "fallback_lookup_hlidac": None,
+        "fallback_lookup_source_name": None,
+        "fallback_lookup_source_url": None,
+        "fallback_lookup_confidence": None,
+        "fallback_lookup_attempts": [],
     }
 
     try:
@@ -156,8 +162,26 @@ def fetch_ares_basic(ico: str) -> dict[str, Any]:
         )
         if resp.status_code == 404:
             result["ares_status"] = "nenalezeno_v_ares"
-            result["nazev"] = "(IČO nenalezeno v ARES)"
             result.update(build_fallback_sources_for_ico(ico))
+            lookup_result = find_company_by_ico(ico).to_dict()
+            result["fallback_lookup_attempts"] = lookup_result.get("attempts", [])
+            result["fallback_lookup_hlidac"] = lookup_result.get("manual_verification_urls", {}).get("Hlídač státu")
+            if lookup_result.get("status") == "found":
+                result["nazev"] = lookup_result.get("nazev")
+                result["sidlo"] = lookup_result.get("sidlo")
+                result["sidlo_raw"] = lookup_result.get("sidlo")
+                result["stav"] = lookup_result.get("stav") or "Nutno ověřit ručně"
+                result["fallback_lookup_found"] = True
+                result["fallback_lookup_source_name"] = lookup_result.get("source_name")
+                result["fallback_lookup_source_url"] = lookup_result.get("source_url")
+                result["fallback_lookup_confidence"] = lookup_result.get("confidence")
+                result["fallback_lookup_note"] = (
+                    "Firma nebyla nalezena v primárním zdroji, ale byla dohledána přes "
+                    f"{lookup_result.get('source_name')}. Údaje doporučujeme ověřit ručně."
+                )
+            else:
+                result["nazev"] = "(IČO nenalezeno v ARES)"
+                result["fallback_lookup_note"] = "Subjekt se nepodařilo automaticky dohledat. Ověřte ručně."
             return result
 
         resp.raise_for_status()
@@ -199,6 +223,26 @@ def fetch_ares_basic(ico: str) -> dict[str, Any]:
     except (ValueError, KeyError) as exc:
         result["ares_status"] = "failed"
         result["ares_chyba"] = f"Neočekávaný formát odpovědi ARES: {exc}"
+
+    if result["ares_status"] == "failed":
+        lookup_result = find_company_by_ico(ico).to_dict()
+        result["fallback_lookup_attempts"] = lookup_result.get("attempts", [])
+        result["fallback_lookup_hlidac"] = lookup_result.get("manual_verification_urls", {}).get("Hlídač státu")
+        if lookup_result.get("status") == "found":
+            result["nazev"] = lookup_result.get("nazev")
+            result["sidlo"] = lookup_result.get("sidlo")
+            result["sidlo_raw"] = lookup_result.get("sidlo")
+            result["stav"] = lookup_result.get("stav") or result.get("stav")
+            result["fallback_lookup_found"] = True
+            result["fallback_lookup_source_name"] = lookup_result.get("source_name")
+            result["fallback_lookup_source_url"] = lookup_result.get("source_url")
+            result["fallback_lookup_confidence"] = lookup_result.get("confidence")
+            result["fallback_lookup_note"] = (
+                "Firma nebyla nalezena v primárním zdroji, ale byla dohledána přes "
+                f"{lookup_result.get('source_name')}. Údaje doporučujeme ověřit ručně."
+            )
+        else:
+            result["fallback_lookup_note"] = "Subjekt se nepodařilo automaticky dohledat. Ověřte ručně."
 
     return result
 

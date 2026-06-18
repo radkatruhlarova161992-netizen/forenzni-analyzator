@@ -20,8 +20,13 @@ ADIS_NS = "{http://adis.mfcr.cz/rozhraniCRPDPH/}"
 JUSTICE_SBIRKA_URL = "https://or.justice.cz/ias/ui/vypis-sl-firma?subjektId={subjekt_id}"
 JUSTICE_VYPIS_URL = "https://or.justice.cz/ias/ui/rejstrik-$firma?ico={ico}"
 JUSTICE_REJSTRIK_API = "https://or.justice.cz/ias/ui/rejstrik-$firma.json?ico={ico}"
+JUSTICE_REJSTRIK_SEARCH_URL = "https://or.justice.cz/ias/ui/rejstrik?ico={ico}"
 
 ISIR_SEARCH_URL = "https://isir.justice.cz/isir/common/index.do"
 KURZY_SEARCH_URL = "https://rejstrik-firem.kurzy.cz/hledej/?s={query}&r={only_valid}"
+KURZY_COMPANY_URL = "https://rejstrik-firem.kurzy.cz/ico/{ico}/"
+HLIDAC_SUBJEKT_URL = "https://www.hlidacstatu.cz/subjekt/{ico}"
+PENIZE_REJSTRIK_SEARCH_URL = "https://rejstrik.penize.cz/?q={ico}"
+DETAIL_COMPANY_URL = "https://www.detail.cz/firma/{ico}"
 
 APP_STATE_PATH = Path(__file__).resolve().parent.parent / "app_state.json"

@@ -6,6 +6,12 @@ from typing import Any
 import pandas as pd
 import streamlit as st
 
+from ui.explainers import (
+    render_key_findings_intro,
+    render_meaning_section,
+    render_next_steps_section,
+    render_term_tooltips,
+)
 from ui.sidebar import render_input_controls, render_sources_info
 
 
@@ -14,6 +20,7 @@ def render_case_screen(results: list[dict[str, Any]], relationship_scope: str) -
         "compare_all_entities": False,
         "input_text": st.session_state.get("input_text", ""),
         "include_historical": st.session_state.get("relationship_scope") == "Aktuální i historické",
+        "expansion_depth": st.session_state.get("expansion_depth", 1),
         "auto_include_all_entities_initial": st.session_state.get("auto_include_all_entities_initial", False),
         "run_analysis": False,
     }
@@ -23,7 +30,21 @@ def render_case_screen(results: list[dict[str, Any]], relationship_scope: str) -
         current_ico_block = ", ".join(rec.get("ico") for rec in results if rec.get("ico"))
         if current_ico_block:
             st.caption(f"Zadaná IČA: {current_ico_block}")
+        analysis_summary = st.session_state.get("last_analysis_summary") or {}
+        if analysis_summary:
+            st.info(
+                "Nalezeno "
+                f"{analysis_summary.get('auto_added_companies', 0)} nových firem a "
+                f"{analysis_summary.get('new_people', 0)} nových osob."
+            )
+        render_key_findings_intro(results)
         render_dashboard(results)
+        with st.expander("Co to znamená?", expanded=True):
+            render_meaning_section()
+        with st.expander("Doporučené další kroky", expanded=True):
+            render_next_steps_section()
+        with st.expander("Vysvětlení pojmů", expanded=False):
+            render_term_tooltips()
         render_navigation_buttons()
         with st.expander("Technické detaily", expanded=False):
             actions["compare_all_entities"] = render_summary_tab(
@@ -36,23 +57,31 @@ def render_case_screen(results: list[dict[str, Any]], relationship_scope: str) -
         with st.expander("Spustit novou analýzu", expanded=False):
             with st.container(border=True):
                 st.markdown("### Nová analýza")
-                st.caption("Vlož IČA a spusť nové načtení.")
+                st.caption("Vlož IČA a spusť kontrolu.")
                 (
                     actions["input_text"],
                     actions["include_historical"],
+                    actions["expansion_depth"],
                     actions["auto_include_all_entities_initial"],
                     actions["run_analysis"],
                 ) = render_input_controls()
     else:
         with st.container(border=True):
             st.markdown("### Nová analýza")
-            st.caption("Vlož IČA a spusť nové načtení.")
+            st.caption("Vlož IČA a spusť kontrolu.")
             (
                 actions["input_text"],
                 actions["include_historical"],
+                actions["expansion_depth"],
                 actions["auto_include_all_entities_initial"],
                 actions["run_analysis"],
             ) = render_input_controls()
+        with st.expander("Co to znamená?", expanded=True):
+            render_meaning_section()
+        with st.expander("Doporučené další kroky", expanded=True):
+            render_next_steps_section()
+        with st.expander("Vysvětlení pojmů", expanded=False):
+            render_term_tooltips()
 
     return actions
 
@@ -80,10 +109,10 @@ def render_dashboard(results: list[dict[str, Any]]) -> None:
         with st.container(border=True):
             st.metric("Rizika", total_risks)
 
-    st.markdown("### Nejdůležitější nálezy")
+    st.markdown("### Přehled")
     findings = build_top_findings(results)
     if not findings:
-        st.info("Zatím nebyly nalezeny žádné výrazné nálezy.")
+        st.info("Zatím tu není žádný výrazný průnik nebo signál.")
         return
 
     for finding in findings:
@@ -121,7 +150,7 @@ def build_top_findings(results: list[dict[str, Any]]) -> list[dict[str, str]]:
         names = ", ".join(record.get("nazev") or record.get("ico") for record in high_risk_records[:5])
         findings.append(
             {
-                "title": f"Vysoké riziko u {len(high_risk_records)} subjektů",
+                "title": f"Více signálů u {len(high_risk_records)} subjektů",
                 "detail": f"Subjekty: {names}",
             }
         )
@@ -141,7 +170,7 @@ def build_top_findings(results: list[dict[str, Any]]) -> list[dict[str, str]]:
         names = ", ".join(record.get("nazev") or record.get("ico") for record in unreliable_vat[:5])
         findings.append(
             {
-                "title": f"Nespolehlivý plátce DPH u {len(unreliable_vat)} subjektů",
+                "title": f"DPH upozornění u {len(unreliable_vat)} subjektů",
                 "detail": f"Subjekty: {names}",
             }
         )
@@ -161,7 +190,7 @@ def build_top_findings(results: list[dict[str, Any]]) -> list[dict[str, str]]:
         top_names = ", ".join(f"{name} ({count})" for name, count in repeated_people[:5])
         findings.append(
             {
-                "title": f"Opakující se osoby napříč firmami: {len(repeated_people)}",
+                "title": f"Opakující se osoby: {len(repeated_people)}",
                 "detail": top_names,
             }
         )
@@ -244,7 +273,7 @@ def render_summary_tab(
         use_container_width=True,
         height=min(400, 60 + 40 * len(df_results)),
     )
-    st.caption("Zvýraznění pomáhá rychle najít subjekty s více ověřenými signály.")
+    st.caption("Zvýraznění pomáhá rychle najít firmy, které stojí za kontrolu.")
     st.caption(f"Režim vazeb: **{relationship_scope}**.")
     csv_data = df_results.to_csv(index=False).encode("utf-8-sig")
     st.download_button(
@@ -258,7 +287,14 @@ def render_summary_tab(
 
 def render_risk_signals_screen(results: list[dict[str, Any]]) -> None:
     st.subheader("Rizikové signály")
-    st.caption("Neutrální přehled signálů k ověření. Každý nález zachovává zdroj.")
+    render_key_findings_intro(results)
+    st.caption("Neutrální přehled údajů, které je vhodné ověřit ve zdroji.")
+    with st.expander("Co to znamená?", expanded=True):
+        render_meaning_section()
+    with st.expander("Doporučené další kroky", expanded=True):
+        render_next_steps_section()
+    with st.expander("Vysvětlení pojmů", expanded=False):
+        render_term_tooltips()
 
     total_flags = sum(len(record.get("risk_flags", []) or []) for record in results)
     if total_flags == 0:

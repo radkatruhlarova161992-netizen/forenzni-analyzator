@@ -7,6 +7,13 @@ import pandas as pd
 import streamlit as st
 
 from core.utils import format_kurzy_search_link
+from ui.explainers import (
+    render_key_findings_intro,
+    render_meaning_section,
+    render_next_steps_section,
+    render_term_tooltips,
+    tooltip_term,
+)
 
 NO_DIRECT_INTERSECTION_TEXT = "Nebyl nalezen přímý průnik v načtených datech."
 
@@ -21,7 +28,14 @@ def render_relationships_screen(
     include_historical: bool,
 ) -> tuple[str, bool, bool]:
     st.subheader("Vazby")
-    st.caption("Hlavní přehled průniků ukazuje, proč jsou načtené firmy propojené a které vazby je spojují.")
+    render_key_findings_intro(results)
+    st.caption("Tady rychle uvidíš, proč spolu firmy souvisejí.")
+    with st.expander("Co to znamená?", expanded=True):
+        render_meaning_section()
+    with st.expander("Doporučené další kroky", expanded=True):
+        render_next_steps_section()
+    with st.expander("Vysvětlení pojmů", expanded=False):
+        render_term_tooltips()
 
     shared_people = build_shared_people_view(relationship_graph["person_occurrences"])
     shared_addresses = build_shared_addresses_view(results)
@@ -42,9 +56,10 @@ def render_relationships_screen(
         st.metric("Historické vazby", len(historical_relationships))
 
     render_relationship_section(
-        "Společné osoby",
+        f"Společné osoby ({tooltip_term('jednatel')}, {tooltip_term('společník')})",
         shared_people,
         NO_DIRECT_INTERSECTION_TEXT,
+        use_html=True,
     )
     render_relationship_section(
         "Společné adresy",
@@ -57,14 +72,15 @@ def render_relationships_screen(
         NO_DIRECT_INTERSECTION_TEXT,
     )
     render_relationship_section(
-        "Historické vazby",
+        tooltip_term("historická vazba"),
         historical_relationships,
         NO_DIRECT_INTERSECTION_TEXT,
+        use_html=True,
     )
 
     st.markdown("### Textová mapa vazeb")
     if not text_map.strip():
-        st.info("Textovou mapu vazeb se z načtených dat nepodařilo sestavit.")
+        st.info("Textovou mapu se nepodařilo sestavit z načtených dat.")
     else:
         st.code(text_map, language="text")
 
@@ -414,8 +430,13 @@ def summarize_relationship_states(states: list[str]) -> str:
     return ", ".join(unique_states) if unique_states else "neuvedeno"
 
 
-def render_relationship_section(title: str, dataframe: pd.DataFrame, empty_text: str) -> None:
-    st.markdown(f"### {title}")
+def render_relationship_section(
+    title: str,
+    dataframe: pd.DataFrame,
+    empty_text: str,
+    use_html: bool = False,
+) -> None:
+    st.markdown(f"### {title}", unsafe_allow_html=use_html)
     if dataframe.empty:
         st.info(empty_text)
         return
@@ -444,14 +465,14 @@ def render_cross_analysis_inputs() -> tuple[bool, str, str]:
             "Osoby pro analýzu",
             height=100,
             key="cross_people_text",
-            placeholder="Např.\nJan Novak\nPetra Svobodova",
+            placeholder="Osoba 1\nOsoba 2",
         )
     with analysis_col2:
         cross_ico_text = st.text_area(
             "Další IČA firem pro analýzu",
             height=100,
             key="cross_ico_text",
-            placeholder="Např.\n27074358\n04808100",
+            placeholder="12345678\n87654321",
         )
 
     run_cross_analysis = st.button(

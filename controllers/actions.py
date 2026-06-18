@@ -40,6 +40,7 @@ def apply_pending_select_all_entities(results: list[dict[str, Any]]) -> None:
 def handle_initial_analysis(
     input_text: str,
     include_historical: bool,
+    expansion_depth: int,
     auto_include_all_entities_initial: bool,
 ) -> None:
     icos = parse_ico_list(input_text)
@@ -49,11 +50,13 @@ def handle_initial_analysis(
 
     st.session_state["selected_relationship_people_names"] = []
     st.session_state["selected_relationship_people_rows"] = []
-    updated_results, _ = analyze_icos(
+    updated_results, _, summary = analyze_icos(
         icos,
         include_historical=include_historical,
         replace=True,
+        expansion_depth=expansion_depth,
     )
+    st.session_state["last_analysis_summary"] = summary
     st.session_state["relationship_include_all_entities"] = (
         auto_include_all_entities_initial
     )
@@ -64,7 +67,11 @@ def handle_initial_analysis(
         st.session_state["selected_relationship_people_names"] = sorted(
             {person["jmeno"] for person in auto_people_rows}
         )
-    st.success(f"Analýza dokončena pro {len(icos)} IČO.")
+    st.success(
+        f"Analýza dokončena pro {len(icos)} zadaných IČO. "
+        f"Nalezeno {summary['auto_added_companies']} nových firem a "
+        f"{summary['new_people']} nových osob."
+    )
 
 
 def handle_ui_actions(
@@ -83,16 +90,19 @@ def handle_ui_actions(
         cross_people = parse_person_list(actions["cross_people_text"])
         cross_icos = parse_ico_list(actions["cross_ico_text"])
         if cross_icos:
-            updated_results, added_count = analyze_icos(
+            updated_results, added_count, summary = analyze_icos(
                 cross_icos,
                 include_historical=include_historical,
                 replace=False,
+                expansion_depth=st.session_state.get("expansion_depth", 1),
             )
             if added_count:
                 st.success(
-                    f"Pro rozšířenou analýzu bylo doplněno {added_count} dalších firem."
+                    f"Pro rozšířenou analýzu bylo doplněno {summary['auto_added_companies']} nových firem "
+                    f"a nalezeno {summary['new_people']} nových osob."
                 )
             results = updated_results
+            st.session_state["last_analysis_summary"] = summary
         st.session_state["cross_analysis_people"] = cross_people
         st.session_state["cross_analysis_enabled"] = True
         persist_callback()
@@ -113,18 +123,21 @@ def handle_ui_actions(
             st.warning("Nezadal jsi žádné platné IČO pro rozšíření vztahů.")
             return
 
-        updated_results, added_count = analyze_icos(
+        updated_results, added_count, summary = analyze_icos(
             extra_icos,
             include_historical=include_historical,
             replace=False,
+            expansion_depth=st.session_state.get("expansion_depth", 1),
         )
         if added_count == 0:
             st.info("Všechna zadaná IČA už v analýze jsou.")
         else:
             st.success(
-                f"Do porovnání vztahů bylo přidáno {added_count} nových firem. "
+                f"Do porovnání vztahů bylo přidáno {summary['auto_added_companies']} nových firem "
+                f"a nalezeno {summary['new_people']} nových osob. "
                 f"Celkem je teď načteno {len(updated_results)} firem."
             )
+        st.session_state["last_analysis_summary"] = summary
         if actions["auto_include_all_entities_extra"]:
             st.session_state["pending_select_all_entities"] = True
         persist_callback()
