@@ -3,6 +3,10 @@
 from typing import Any
 
 
+def _is_osvc(record: dict[str, Any]) -> bool:
+    return str(record.get("pravni_forma") or "") == "101"
+
+
 def evaluate_risk_flags(record: dict[str, Any]) -> list[dict[str, str | None]]:
     flags: list[dict[str, str | None]] = []
 
@@ -33,7 +37,10 @@ def evaluate_risk_flags(record: dict[str, Any]) -> list[dict[str, str | None]]:
             }
         )
 
-    if record.get("sbirka_status") in ("failed", "error", "nenalezeno", "timeout"):
+    if (
+        not _is_osvc(record)
+        and record.get("sbirka_status") in ("failed", "error", "nenalezeno", "timeout")
+    ):
         flags.append(
             {
                 "signal": "Sbírku listin nelze automaticky ověřit (chybějící účetní závěrky 2023–2025 nutno zkontrolovat ručně)",
