@@ -1,0 +1,1 @@
+"""Veřejné zdroje dat."""

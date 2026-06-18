@@ -1,0 +1,1 @@
+"""Datové modely aplikace."""

@@ -1,0 +1,1 @@
+"""Analytické funkce aplikace."""

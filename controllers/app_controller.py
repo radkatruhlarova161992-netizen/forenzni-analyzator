@@ -1,0 +1,99 @@
+"""Hlavní controller aplikace."""
+
+import streamlit as st
+
+from controllers.actions import (
+    apply_pending_select_all_entities,
+    handle_initial_analysis,
+    handle_ui_actions,
+)
+from controllers.payloads import build_ui_payloads
+from core.state import save_persisted_state
+from ui.render_ui import render_ui
+
+
+def persist_state() -> None:
+    save_persisted_state(
+        {
+            "input_text": st.session_state.get("input_text", ""),
+            "relationship_scope": st.session_state.get(
+                "relationship_scope", "Jen aktuální"
+            ),
+            "auto_include_all_entities_initial": st.session_state.get(
+                "auto_include_all_entities_initial", False
+            ),
+            "results": st.session_state.get("results", []),
+            "selected_relationship_people_names": st.session_state.get(
+                "selected_relationship_people_names", []
+            ),
+            "selected_relationship_people_rows": st.session_state.get(
+                "selected_relationship_people_rows", []
+            ),
+            "relationship_include_all_entities": st.session_state.get(
+                "relationship_include_all_entities", False
+            ),
+            "cross_analysis_people": st.session_state.get("cross_analysis_people", []),
+            "cross_analysis_enabled": st.session_state.get(
+                "cross_analysis_enabled", False
+            ),
+            "cross_people_text": st.session_state.get("cross_people_text", ""),
+            "cross_ico_text": st.session_state.get("cross_ico_text", ""),
+            "extra_relationship_ico_text": st.session_state.get(
+                "extra_relationship_ico_text", ""
+            ),
+            "auto_include_all_entities_extra": st.session_state.get(
+                "auto_include_all_entities_extra", False
+            ),
+            "compare_all_entities_global": st.session_state.get(
+                "compare_all_entities_global", False
+            ),
+            "pending_select_all_entities": st.session_state.get(
+                "pending_select_all_entities", False
+            ),
+        }
+    )
+
+
+def run_app_controller(current_screen: str) -> None:
+    include_historical = (
+        st.session_state.get("relationship_scope") == "Aktuální i historické"
+    )
+
+    results = st.session_state.get("results", [])
+    apply_pending_select_all_entities(results)
+
+    payloads = build_ui_payloads(
+        results=results,
+        selected_people_names=st.session_state.get(
+            "selected_relationship_people_names", []
+        ),
+        selected_people_rows=st.session_state.get(
+            "selected_relationship_people_rows", []
+        ),
+        relationship_include_all_entities=st.session_state.get(
+            "relationship_include_all_entities", False
+        ),
+        cross_analysis_people=st.session_state.get("cross_analysis_people", []),
+        cross_analysis_enabled=st.session_state.get("cross_analysis_enabled", False),
+    )
+
+    actions = render_ui(
+        current_screen,
+        results,
+        include_historical,
+        st.session_state.get("relationship_scope", "Jen aktuální"),
+        payloads["relationship_graph"],
+        payloads["cross_analysis_payload"],
+        payloads["selected_people_payload"],
+    )
+
+    if actions["run_analysis"]:
+        handle_initial_analysis(
+            actions["input_text"],
+            actions["include_historical"],
+            actions["auto_include_all_entities_initial"],
+        )
+        persist_state()
+        st.rerun()
+
+    handle_ui_actions(actions, include_historical, persist_state)

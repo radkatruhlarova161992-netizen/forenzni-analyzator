@@ -1,0 +1,888 @@
+{
+  "input_text": "",
+  "relationship_scope": "Jen aktuální",
+  "auto_include_all_entities_initial": false,
+  "results": [
+    {
+      "ico": "04808100",
+      "include_historical": true,
+      "cas_analyzy": "18.06.2026 12:40",
+      "nazev": "Agrogrip s.r.o.",
+      "sidlo": "Korunní, 2569, Praha, 10100",
+      "pravni_forma": "112",
+      "stav": "Aktivní",
+      "v_likvidaci": false,
+      "datum_vzniku": "2016-02-12",
+      "datum_zaniku": null,
+      "zdroj_ares": "https://ares.gov.cz/ekonomicke-subjekty-v-be/rest/ekonomicke-subjekty/04808100",
+      "ares_status": "ok",
+      "ares_chyba": null,
+      "fallback_lookup_found": false,
+      "fallback_lookup_note": null,
+      "fallback_lookup_justice": "https://or.justice.cz/ias/ui/rejstrik-$firma?ico=04808100",
+      "fallback_lookup_kurzy": "https://rejstrik-firem.kurzy.cz/hledej/?s=04808100&r=True",
+      "sidlo_raw": "Korunní 2569/108, Vinohrady, 10100 Praha 10",
+      "osoby": [
+        {
+          "jmeno": "Mgr. et Mgr. PETRA ŠRÁMKOVÁ HARANTOVÁ",
+          "role": "jednatel",
+          "od": "2016-02-12",
+          "do": "2017-04-08",
+          "stav_vazby": "Historická",
+          "zdroj_cast": "Statutární orgán",
+          "adresa": "Bzenecká 1026/36, Severní Předměstí, 32300 Plzeň",
+          "kurzy_vazby_link": "https://rejstrik-firem.kurzy.cz/hledej/?s=Mgr.%20et%20Mgr.%20PETRA%20%C5%A0R%C3%81MKOV%C3%81%20HARANTOV%C3%81&r=False"
+        },
+        {
+          "jmeno": "MAREK TÁBORSKÝ",
+          "role": "jednatel",
+          "od": "2017-04-08",
+          "do": null,
+          "stav_vazby": "Aktuální",
+          "zdroj_cast": "Statutární orgán",
+          "adresa": "Jaromírova 759/13, Nusle, 12800 Praha 2",
+          "kurzy_vazby_link": "https://rejstrik-firem.kurzy.cz/hledej/?s=MAREK%20T%C3%81BORSK%C3%9D&r=False"
+        },
+        {
+          "jmeno": "MILOŠ KINDL",
+          "role": "Společníci",
+          "od": "2018-02-01",
+          "do": "2026-04-10",
+          "stav_vazby": "Historická",
+          "zdroj_cast": "Společníci",
+          "adresa": "Žitomírská 805/41, Vršovice, 10100 Praha 10",
+          "kurzy_vazby_link": "https://rejstrik-firem.kurzy.cz/hledej/?s=MILO%C5%A0%20KINDL&r=False"
+        },
+        {
+          "jmeno": "Mgr. et Mgr. PETRA ŠRÁMKOVÁ HARANTOVÁ",
+          "role": "Společníci",
+          "od": "2016-02-12",
+          "do": "2017-04-08",
+          "stav_vazby": "Historická",
+          "zdroj_cast": "Společníci",
+          "adresa": "Bzenecká 1026/36, Severní Předměstí, 32300 Plzeň",
+          "kurzy_vazby_link": "https://rejstrik-firem.kurzy.cz/hledej/?s=Mgr.%20et%20Mgr.%20PETRA%20%C5%A0R%C3%81MKOV%C3%81%20HARANTOV%C3%81&r=False"
+        },
+        {
+          "jmeno": "MAREK TÁBORSKÝ",
+          "role": "Společníci",
+          "od": "2017-04-08",
+          "do": "2018-02-01",
+          "stav_vazby": "Historická",
+          "zdroj_cast": "Společníci",
+          "adresa": "Jaromírova 759/13, Nusle, 12800 Praha 2",
+          "kurzy_vazby_link": "https://rejstrik-firem.kurzy.cz/hledej/?s=MAREK%20T%C3%81BORSK%C3%9D&r=False"
+        },
+        {
+          "jmeno": "MAREK TÁBORSKÝ",
+          "role": "Společníci",
+          "od": "2026-04-10",
+          "do": null,
+          "stav_vazby": "Aktuální",
+          "zdroj_cast": "Společníci",
+          "adresa": "Jaromírova 759/13, Nusle, 12800 Praha 2",
+          "kurzy_vazby_link": "https://rejstrik-firem.kurzy.cz/hledej/?s=MAREK%20T%C3%81BORSK%C3%9D&r=False"
+        }
+      ],
+      "navazane_firmy": [],
+      "vr_status": "ok",
+      "vr_chyba": null,
+      "zdroj_vr": "https://ares.gov.cz/ekonomicke-subjekty-v-be/rest/ekonomicke-subjekty-vr/04808100",
+      "dph_status": "ok",
+      "nespolehlivy_platce": false,
+      "datum_zverejneni": null,
+      "dph_chyba": null,
+      "zdroj_dph": "https://adisrws.mfcr.cz/adistc/axis2/services/rozhraniCRPDPH.rozhraniCRPDPHSOAP?wsdl",
+      "sbirka_status": "failed",
+      "sbirka_chyba": "Chyba spojení s justice.cz: Expecting value: line 1 column 1 (char 0)",
+      "subjekt_id": null,
+      "link_sbirka_listin": "https://or.justice.cz/ias/ui/rejstrik-$firma?nazev=Agrogrip%20s.r.o.&ico=04808100",
+      "link_rejstrik": "https://or.justice.cz/ias/ui/rejstrik-$firma?nazev=Agrogrip%20s.r.o.&ico=04808100",
+      "chybi_zaverky_2023_2025": "nutno ověřit ručně",
+      "isir_status": "castecny_vysledek",
+      "isir_chyba": null,
+      "probiha_insolvence": "nutno ověřit ručně",
+      "link_isir": "https://isir.justice.cz/isir/common/index.do#hledani-ic=04808100",
+      "risk_flags": [
+        {
+          "signal": "Insolvenční rejstřík nelze automaticky vyhodnotit – nutná ruční kontrola",
+          "jistota": "neověřené – vyžaduje ruční kontrolu",
+          "zdroj": "https://isir.justice.cz/isir/common/index.do#hledani-ic=04808100"
+        },
+        {
+          "signal": "Sbírku listin nelze automaticky ověřit (chybějící účetní závěrky 2023–2025 nutno zkontrolovat ručně)",
+          "jistota": "neověřené – vyžaduje ruční kontrolu",
+          "zdroj": "https://or.justice.cz/ias/ui/rejstrik-$firma?nazev=Agrogrip%20s.r.o.&ico=04808100"
+        }
+      ],
+      "risk_level": "Střední (nutno ověřit)"
+    },
+    {
+      "ico": "08726973",
+      "include_historical": true,
+      "cas_analyzy": "18.06.2026 12:40",
+      "nazev": "main agency s.r.o.",
+      "sidlo": "Jaurisova, 515, Praha, 14000",
+      "pravni_forma": "112",
+      "stav": "Aktivní",
+      "v_likvidaci": false,
+      "datum_vzniku": "2019-11-28",
+      "datum_zaniku": null,
+      "zdroj_ares": "https://ares.gov.cz/ekonomicke-subjekty-v-be/rest/ekonomicke-subjekty/08726973",
+      "ares_status": "ok",
+      "ares_chyba": null,
+      "fallback_lookup_found": false,
+      "fallback_lookup_note": null,
+      "fallback_lookup_justice": "https://or.justice.cz/ias/ui/rejstrik-$firma?ico=08726973",
+      "fallback_lookup_kurzy": "https://rejstrik-firem.kurzy.cz/hledej/?s=08726973&r=True",
+      "sidlo_raw": "Jaurisova 515/4, Michle, 14000 Praha 4",
+      "osoby": [
+        {
+          "jmeno": "PAVEL ŠTUKAVEC",
+          "role": "jednatel",
+          "od": "2020-04-09",
+          "do": "2025-05-31",
+          "stav_vazby": "Historická",
+          "zdroj_cast": "Statutární orgán",
+          "adresa": "U Botiče 1389/1, Michle, 14000 Praha 4",
+          "kurzy_vazby_link": "https://rejstrik-firem.kurzy.cz/hledej/?s=PAVEL%20%C5%A0TUKAVEC&r=False"
+        },
+        {
+          "jmeno": "MARTIN PETRÍK",
+          "role": "Jednatel",
+          "od": "2025-05-31",
+          "do": null,
+          "stav_vazby": "Aktuální",
+          "zdroj_cast": "Statutární orgán",
+          "adresa": "Lipnická 314/89, 90042 Dunajská Lužná - Nová Lipnica, Slovensko",
+          "kurzy_vazby_link": "https://rejstrik-firem.kurzy.cz/hledej/?s=MARTIN%20PETR%C3%8DK&r=False"
+        },
+        {
+          "jmeno": "PAVEL ŠTUKAVEC",
+          "role": "Společníci",
+          "od": "2020-04-09",
+          "do": "2025-03-21",
+          "stav_vazby": "Historická",
+          "zdroj_cast": "Společníci",
+          "adresa": "U Botiče 1389/1, Michle, 14000 Praha 4",
+          "kurzy_vazby_link": "https://rejstrik-firem.kurzy.cz/hledej/?s=PAVEL%20%C5%A0TUKAVEC&r=False"
+        },
+        {
+          "jmeno": "MARTIN PETRÍK",
+          "role": "Společníci",
+          "od": "2025-03-21",
+          "do": null,
+          "stav_vazby": "Aktuální",
+          "zdroj_cast": "Společníci",
+          "adresa": "Lipnická 314/89, 90042 Dunajská Lužná - Nová Lipnica, Slovensko",
+          "kurzy_vazby_link": "https://rejstrik-firem.kurzy.cz/hledej/?s=MARTIN%20PETR%C3%8DK&r=False"
+        }
+      ],
+      "navazane_firmy": [
+        {
+          "firma": "super business s.r.o.",
+          "ico": "08264252",
+          "role": "jednatel",
+          "od": "2019-11-28",
+          "do": "2020-04-09",
+          "stav_vazby": "Historická",
+          "zdroj_cast": "Statutární orgán",
+          "kurzy_vazby_link": "https://rejstrik-firem.kurzy.cz/hledej/?s=08264252&r=False"
+        },
+        {
+          "firma": "super business s.r.o.",
+          "ico": "08264252",
+          "role": "Společníci",
+          "od": "2019-11-28",
+          "do": "2020-04-09",
+          "stav_vazby": "Historická",
+          "zdroj_cast": "Společníci",
+          "kurzy_vazby_link": "https://rejstrik-firem.kurzy.cz/hledej/?s=08264252&r=False"
+        }
+      ],
+      "vr_status": "ok",
+      "vr_chyba": null,
+      "zdroj_vr": "https://ares.gov.cz/ekonomicke-subjekty-v-be/rest/ekonomicke-subjekty-vr/08726973",
+      "dph_status": "ok",
+      "nespolehlivy_platce": false,
+      "datum_zverejneni": null,
+      "dph_chyba": null,
+      "zdroj_dph": "https://adisrws.mfcr.cz/adistc/axis2/services/rozhraniCRPDPH.rozhraniCRPDPHSOAP?wsdl",
+      "sbirka_status": "failed",
+      "sbirka_chyba": "Chyba spojení s justice.cz: Expecting value: line 1 column 1 (char 0)",
+      "subjekt_id": null,
+      "link_sbirka_listin": "https://or.justice.cz/ias/ui/rejstrik-$firma?nazev=main%20agency%20s.r.o.&ico=08726973",
+      "link_rejstrik": "https://or.justice.cz/ias/ui/rejstrik-$firma?nazev=main%20agency%20s.r.o.&ico=08726973",
+      "chybi_zaverky_2023_2025": "nutno ověřit ručně",
+      "isir_status": "castecny_vysledek",
+      "isir_chyba": null,
+      "probiha_insolvence": "nutno ověřit ručně",
+      "link_isir": "https://isir.justice.cz/isir/common/index.do#hledani-ic=08726973",
+      "risk_flags": [
+        {
+          "signal": "Insolvenční rejstřík nelze automaticky vyhodnotit – nutná ruční kontrola",
+          "jistota": "neověřené – vyžaduje ruční kontrolu",
+          "zdroj": "https://isir.justice.cz/isir/common/index.do#hledani-ic=08726973"
+        },
+        {
+          "signal": "Sbírku listin nelze automaticky ověřit (chybějící účetní závěrky 2023–2025 nutno zkontrolovat ručně)",
+          "jistota": "neověřené – vyžaduje ruční kontrolu",
+          "zdroj": "https://or.justice.cz/ias/ui/rejstrik-$firma?nazev=main%20agency%20s.r.o.&ico=08726973"
+        }
+      ],
+      "risk_level": "Střední (nutno ověřit)"
+    },
+    {
+      "ico": "08264252",
+      "include_historical": true,
+      "cas_analyzy": "18.06.2026 12:40",
+      "nazev": "(IČO nenalezeno v ARES)",
+      "sidlo": null,
+      "pravni_forma": null,
+      "stav": null,
+      "v_likvidaci": false,
+      "datum_vzniku": null,
+      "datum_zaniku": null,
+      "zdroj_ares": "https://ares.gov.cz/ekonomicke-subjekty-v-be/rest/ekonomicke-subjekty/08264252",
+      "ares_status": "nenalezeno_v_ares",
+      "ares_chyba": null,
+      "fallback_lookup_found": false,
+      "fallback_lookup_note": "IČO nebylo nalezeno v ARES. Připraveno dohledání přes Justice.cz a Kurzy.cz.",
+      "fallback_lookup_justice": "https://or.justice.cz/ias/ui/rejstrik-$firma?ico=08264252",
+      "fallback_lookup_kurzy": "https://rejstrik-firem.kurzy.cz/hledej/?s=08264252&r=True",
+      "osoby": [],
+      "navazane_firmy": [],
+      "vr_status": "nenalezeno",
+      "vr_chyba": null,
+      "zdroj_vr": "https://ares.gov.cz/ekonomicke-subjekty-v-be/rest/ekonomicke-subjekty-vr/08264252",
+      "dph_status": "ok",
+      "nespolehlivy_platce": false,
+      "datum_zverejneni": null,
+      "dph_chyba": null,
+      "zdroj_dph": "https://adisrws.mfcr.cz/adistc/axis2/services/rozhraniCRPDPH.rozhraniCRPDPHSOAP?wsdl",
+      "sbirka_status": "failed",
+      "sbirka_chyba": "Chyba spojení s justice.cz: Expecting value: line 1 column 1 (char 0)",
+      "subjekt_id": null,
+      "link_sbirka_listin": "https://or.justice.cz/ias/ui/rejstrik-$firma?nazev=%28I%C4%8CO%20nenalezeno%20v%20ARES%29&ico=08264252",
+      "link_rejstrik": "https://or.justice.cz/ias/ui/rejstrik-$firma?nazev=%28I%C4%8CO%20nenalezeno%20v%20ARES%29&ico=08264252",
+      "chybi_zaverky_2023_2025": "nutno ověřit ručně",
+      "isir_status": "castecny_vysledek",
+      "isir_chyba": null,
+      "probiha_insolvence": "nutno ověřit ručně",
+      "link_isir": "https://isir.justice.cz/isir/common/index.do#hledani-ic=08264252",
+      "risk_flags": [
+        {
+          "signal": "Insolvenční rejstřík nelze automaticky vyhodnotit – nutná ruční kontrola",
+          "jistota": "neověřené – vyžaduje ruční kontrolu",
+          "zdroj": "https://isir.justice.cz/isir/common/index.do#hledani-ic=08264252"
+        },
+        {
+          "signal": "Sbírku listin nelze automaticky ověřit (chybějící účetní závěrky 2023–2025 nutno zkontrolovat ručně)",
+          "jistota": "neověřené – vyžaduje ruční kontrolu",
+          "zdroj": "https://or.justice.cz/ias/ui/rejstrik-$firma?nazev=%28I%C4%8CO%20nenalezeno%20v%20ARES%29&ico=08264252"
+        }
+      ],
+      "risk_level": "Střední (nutno ověřit)"
+    },
+    {
+      "ico": "28191579",
+      "include_historical": true,
+      "cas_analyzy": "18.06.2026 12:40",
+      "nazev": "(IČO nenalezeno v ARES)",
+      "sidlo": null,
+      "pravni_forma": null,
+      "stav": null,
+      "v_likvidaci": false,
+      "datum_vzniku": null,
+      "datum_zaniku": null,
+      "zdroj_ares": "https://ares.gov.cz/ekonomicke-subjekty-v-be/rest/ekonomicke-subjekty/28191579",
+      "ares_status": "nenalezeno_v_ares",
+      "ares_chyba": null,
+      "fallback_lookup_found": false,
+      "fallback_lookup_note": "IČO nebylo nalezeno v ARES. Připraveno dohledání přes Justice.cz a Kurzy.cz.",
+      "fallback_lookup_justice": "https://or.justice.cz/ias/ui/rejstrik-$firma?ico=28191579",
+      "fallback_lookup_kurzy": "https://rejstrik-firem.kurzy.cz/hledej/?s=28191579&r=True",
+      "osoby": [],
+      "navazane_firmy": [],
+      "vr_status": "nenalezeno",
+      "vr_chyba": null,
+      "zdroj_vr": "https://ares.gov.cz/ekonomicke-subjekty-v-be/rest/ekonomicke-subjekty-vr/28191579",
+      "dph_status": "ok",
+      "nespolehlivy_platce": false,
+      "datum_zverejneni": null,
+      "dph_chyba": null,
+      "zdroj_dph": "https://adisrws.mfcr.cz/adistc/axis2/services/rozhraniCRPDPH.rozhraniCRPDPHSOAP?wsdl",
+      "sbirka_status": "failed",
+      "sbirka_chyba": "Chyba spojení s justice.cz: Expecting value: line 1 column 1 (char 0)",
+      "subjekt_id": null,
+      "link_sbirka_listin": "https://or.justice.cz/ias/ui/rejstrik-$firma?nazev=%28I%C4%8CO%20nenalezeno%20v%20ARES%29&ico=28191579",
+      "link_rejstrik": "https://or.justice.cz/ias/ui/rejstrik-$firma?nazev=%28I%C4%8CO%20nenalezeno%20v%20ARES%29&ico=28191579",
+      "chybi_zaverky_2023_2025": "nutno ověřit ručně",
+      "isir_status": "castecny_vysledek",
+      "isir_chyba": null,
+      "probiha_insolvence": "nutno ověřit ručně",
+      "link_isir": "https://isir.justice.cz/isir/common/index.do#hledani-ic=28191579",
+      "risk_flags": [
+        {
+          "signal": "Insolvenční rejstřík nelze automaticky vyhodnotit – nutná ruční kontrola",
+          "jistota": "neověřené – vyžaduje ruční kontrolu",
+          "zdroj": "https://isir.justice.cz/isir/common/index.do#hledani-ic=28191579"
+        },
+        {
+          "signal": "Sbírku listin nelze automaticky ověřit (chybějící účetní závěrky 2023–2025 nutno zkontrolovat ručně)",
+          "jistota": "neověřené – vyžaduje ruční kontrolu",
+          "zdroj": "https://or.justice.cz/ias/ui/rejstrik-$firma?nazev=%28I%C4%8CO%20nenalezeno%20v%20ARES%29&ico=28191579"
+        }
+      ],
+      "risk_level": "Střední (nutno ověřit)"
+    },
+    {
+      "ico": "05892651",
+      "include_historical": true,
+      "cas_analyzy": "18.06.2026 12:40",
+      "nazev": "Cloud Telecom ventures s.r.o.",
+      "sidlo": "Jaurisova, 515, Praha, 14000",
+      "pravni_forma": "112",
+      "stav": "Aktivní",
+      "v_likvidaci": false,
+      "datum_vzniku": "2017-03-08",
+      "datum_zaniku": null,
+      "zdroj_ares": "https://ares.gov.cz/ekonomicke-subjekty-v-be/rest/ekonomicke-subjekty/05892651",
+      "ares_status": "ok",
+      "ares_chyba": null,
+      "fallback_lookup_found": false,
+      "fallback_lookup_note": null,
+      "fallback_lookup_justice": "https://or.justice.cz/ias/ui/rejstrik-$firma?ico=05892651",
+      "fallback_lookup_kurzy": "https://rejstrik-firem.kurzy.cz/hledej/?s=05892651&r=True",
+      "sidlo_raw": "Jaurisova 515/4, Michle, 14000 Praha 4",
+      "osoby": [
+        {
+          "jmeno": "MICHAL KRAJČÍROVIČ",
+          "role": "jednatel",
+          "od": "2017-03-08",
+          "do": "2018-01-17",
+          "stav_vazby": "Historická",
+          "zdroj_cast": "Statutární orgán",
+          "adresa": "Přívozní 1600/2b, Holešovice, 17000 Praha 7",
+          "kurzy_vazby_link": "https://rejstrik-firem.kurzy.cz/hledej/?s=MICHAL%20KRAJ%C4%8C%C3%8DROVI%C4%8C&r=False"
+        },
+        {
+          "jmeno": "MICHAL KRAJČÍROVIČ",
+          "role": "jednatel",
+          "od": "2018-01-17",
+          "do": "2019-08-14",
+          "stav_vazby": "Historická",
+          "zdroj_cast": "Statutární orgán",
+          "adresa": "Štěpánská 1677/20, Nové Město, 11000 Praha 1",
+          "kurzy_vazby_link": "https://rejstrik-firem.kurzy.cz/hledej/?s=MICHAL%20KRAJ%C4%8C%C3%8DROVI%C4%8C&r=False"
+        },
+        {
+          "jmeno": "NIVIA ROSA CANDANEDO DE VEGA",
+          "role": "jednatel",
+          "od": "2019-08-14",
+          "do": null,
+          "stav_vazby": "Aktuální",
+          "zdroj_cast": "Statutární orgán",
+          "adresa": "Urbanización Altos del Rio, Calle Principal, David, Provincia de Chiriquí, Panama",
+          "kurzy_vazby_link": "https://rejstrik-firem.kurzy.cz/hledej/?s=NIVIA%20ROSA%20CANDANEDO%20DE%20VEGA&r=False"
+        },
+        {
+          "jmeno": "NIVIA ROSA CANDANEDO DE VEGA",
+          "role": "Společníci",
+          "od": "2019-08-14",
+          "do": null,
+          "stav_vazby": "Aktuální",
+          "zdroj_cast": "Společníci",
+          "adresa": "Urbanización Altos del Rio, Calle Principal, David, Provincia de Chiriquí, Panama",
+          "kurzy_vazby_link": "https://rejstrik-firem.kurzy.cz/hledej/?s=NIVIA%20ROSA%20CANDANEDO%20DE%20VEGA&r=False"
+        }
+      ],
+      "navazane_firmy": [
+        {
+          "firma": "Cloud Telecom a.s.",
+          "ico": "04193946",
+          "role": "Společníci",
+          "od": "2017-03-08",
+          "do": "2019-08-14",
+          "stav_vazby": "Historická",
+          "zdroj_cast": "Společníci",
+          "kurzy_vazby_link": "https://rejstrik-firem.kurzy.cz/hledej/?s=04193946&r=False"
+        }
+      ],
+      "vr_status": "ok",
+      "vr_chyba": null,
+      "zdroj_vr": "https://ares.gov.cz/ekonomicke-subjekty-v-be/rest/ekonomicke-subjekty-vr/05892651",
+      "dph_status": "ok",
+      "nespolehlivy_platce": false,
+      "datum_zverejneni": null,
+      "dph_chyba": null,
+      "zdroj_dph": "https://adisrws.mfcr.cz/adistc/axis2/services/rozhraniCRPDPH.rozhraniCRPDPHSOAP?wsdl",
+      "sbirka_status": "failed",
+      "sbirka_chyba": "Chyba spojení s justice.cz: Expecting value: line 1 column 1 (char 0)",
+      "subjekt_id": null,
+      "link_sbirka_listin": "https://or.justice.cz/ias/ui/rejstrik-$firma?nazev=Cloud%20Telecom%20ventures%20s.r.o.&ico=05892651",
+      "link_rejstrik": "https://or.justice.cz/ias/ui/rejstrik-$firma?nazev=Cloud%20Telecom%20ventures%20s.r.o.&ico=05892651",
+      "chybi_zaverky_2023_2025": "nutno ověřit ručně",
+      "isir_status": "castecny_vysledek",
+      "isir_chyba": null,
+      "probiha_insolvence": "nutno ověřit ručně",
+      "link_isir": "https://isir.justice.cz/isir/common/index.do#hledani-ic=05892651",
+      "risk_flags": [
+        {
+          "signal": "Insolvenční rejstřík nelze automaticky vyhodnotit – nutná ruční kontrola",
+          "jistota": "neověřené – vyžaduje ruční kontrolu",
+          "zdroj": "https://isir.justice.cz/isir/common/index.do#hledani-ic=05892651"
+        },
+        {
+          "signal": "Sbírku listin nelze automaticky ověřit (chybějící účetní závěrky 2023–2025 nutno zkontrolovat ručně)",
+          "jistota": "neověřené – vyžaduje ruční kontrolu",
+          "zdroj": "https://or.justice.cz/ias/ui/rejstrik-$firma?nazev=Cloud%20Telecom%20ventures%20s.r.o.&ico=05892651"
+        }
+      ],
+      "risk_level": "Střední (nutno ověřit)"
+    },
+    {
+      "ico": "06845142",
+      "include_historical": true,
+      "cas_analyzy": "18.06.2026 12:40",
+      "nazev": "onlinesupp.com s.r.o.",
+      "sidlo": "Goetheho, 1077, Praha, 16000",
+      "pravni_forma": "112",
+      "stav": "Aktivní",
+      "v_likvidaci": false,
+      "datum_vzniku": "2018-02-08",
+      "datum_zaniku": null,
+      "zdroj_ares": "https://ares.gov.cz/ekonomicke-subjekty-v-be/rest/ekonomicke-subjekty/06845142",
+      "ares_status": "ok",
+      "ares_chyba": null,
+      "fallback_lookup_found": false,
+      "fallback_lookup_note": null,
+      "fallback_lookup_justice": "https://or.justice.cz/ias/ui/rejstrik-$firma?ico=06845142",
+      "fallback_lookup_kurzy": "https://rejstrik-firem.kurzy.cz/hledej/?s=06845142&r=True",
+      "sidlo_raw": "Goetheho 1077/23, Bubeneč, 16000 Praha 6",
+      "osoby": [
+        {
+          "jmeno": "JIŘÍ HOLAKOVSKÝ",
+          "role": "jednatel",
+          "od": "2021-05-03",
+          "do": "2022-03-23",
+          "stav_vazby": "Historická",
+          "zdroj_cast": "Statutární orgán",
+          "adresa": "č.p. 76, 28002 Býchory",
+          "kurzy_vazby_link": "https://rejstrik-firem.kurzy.cz/hledej/?s=JI%C5%98%C3%8D%20HOLAKOVSK%C3%9D&r=False"
+        },
+        {
+          "jmeno": "JIŘÍ HOLAKOVSKÝ",
+          "role": "jednatel",
+          "od": "2022-03-23",
+          "do": "2024-02-10",
+          "stav_vazby": "Historická",
+          "zdroj_cast": "Statutární orgán",
+          "adresa": "č.p. 142, 54341 Dolní Lánov",
+          "kurzy_vazby_link": "https://rejstrik-firem.kurzy.cz/hledej/?s=JI%C5%98%C3%8D%20HOLAKOVSK%C3%9D&r=False"
+        },
+        {
+          "jmeno": "MICHAL KRAJČÍROVIČ",
+          "role": "jednatel",
+          "od": "2018-02-08",
+          "do": null,
+          "stav_vazby": "Aktuální",
+          "zdroj_cast": "Statutární orgán",
+          "adresa": "Štěpánská 1677/20, Nové Město, 11000 Praha 1",
+          "kurzy_vazby_link": "https://rejstrik-firem.kurzy.cz/hledej/?s=MICHAL%20KRAJ%C4%8C%C3%8DROVI%C4%8C&r=False"
+        },
+        {
+          "jmeno": "JIŘÍ HOLAKOVSKÝ",
+          "role": "jednatel",
+          "od": "2018-02-08",
+          "do": "2021-05-03",
+          "stav_vazby": "Historická",
+          "zdroj_cast": "Statutární orgán",
+          "adresa": "Nouzov 72, 28901 Chotěšice",
+          "kurzy_vazby_link": "https://rejstrik-firem.kurzy.cz/hledej/?s=JI%C5%98%C3%8D%20HOLAKOVSK%C3%9D&r=False"
+        },
+        {
+          "jmeno": "JIŘÍ HOLAKOVSKÝ",
+          "role": "jednatel",
+          "od": "2024-02-10",
+          "do": null,
+          "stav_vazby": "Aktuální",
+          "zdroj_cast": "Statutární orgán",
+          "adresa": "Vavřenova 1171/10, Braník, 14200 Praha 4",
+          "kurzy_vazby_link": "https://rejstrik-firem.kurzy.cz/hledej/?s=JI%C5%98%C3%8D%20HOLAKOVSK%C3%9D&r=False"
+        },
+        {
+          "jmeno": "JIŘÍ HOLAKOVSKÝ",
+          "role": "Společníci",
+          "od": "2021-05-03",
+          "do": "2022-03-23",
+          "stav_vazby": "Historická",
+          "zdroj_cast": "Společníci",
+          "adresa": "č.p. 76, 28002 Býchory",
+          "kurzy_vazby_link": "https://rejstrik-firem.kurzy.cz/hledej/?s=JI%C5%98%C3%8D%20HOLAKOVSK%C3%9D&r=False"
+        },
+        {
+          "jmeno": "JIŘÍ HOLAKOVSKÝ",
+          "role": "Společníci",
+          "od": "2022-03-23",
+          "do": "2024-02-10",
+          "stav_vazby": "Historická",
+          "zdroj_cast": "Společníci",
+          "adresa": "č.p. 142, 54341 Dolní Lánov",
+          "kurzy_vazby_link": "https://rejstrik-firem.kurzy.cz/hledej/?s=JI%C5%98%C3%8D%20HOLAKOVSK%C3%9D&r=False"
+        },
+        {
+          "jmeno": "MICHAL KRAJČÍROVIČ",
+          "role": "Společníci",
+          "od": "2018-02-08",
+          "do": null,
+          "stav_vazby": "Aktuální",
+          "zdroj_cast": "Společníci",
+          "adresa": "Štěpánská 1677/20, Nové Město, 11000 Praha 1",
+          "kurzy_vazby_link": "https://rejstrik-firem.kurzy.cz/hledej/?s=MICHAL%20KRAJ%C4%8C%C3%8DROVI%C4%8C&r=False"
+        },
+        {
+          "jmeno": "JIŘÍ HOLAKOVSKÝ",
+          "role": "Společníci",
+          "od": "2018-02-08",
+          "do": "2021-05-03",
+          "stav_vazby": "Historická",
+          "zdroj_cast": "Společníci",
+          "adresa": "Nouzov 72, 28901 Chotěšice",
+          "kurzy_vazby_link": "https://rejstrik-firem.kurzy.cz/hledej/?s=JI%C5%98%C3%8D%20HOLAKOVSK%C3%9D&r=False"
+        },
+        {
+          "jmeno": "JIŘÍ HOLAKOVSKÝ",
+          "role": "Společníci",
+          "od": "2024-02-10",
+          "do": null,
+          "stav_vazby": "Aktuální",
+          "zdroj_cast": "Společníci",
+          "adresa": "Vavřenova 1171/10, Braník, 14200 Praha 4",
+          "kurzy_vazby_link": "https://rejstrik-firem.kurzy.cz/hledej/?s=JI%C5%98%C3%8D%20HOLAKOVSK%C3%9D&r=False"
+        }
+      ],
+      "navazane_firmy": [],
+      "vr_status": "ok",
+      "vr_chyba": null,
+      "zdroj_vr": "https://ares.gov.cz/ekonomicke-subjekty-v-be/rest/ekonomicke-subjekty-vr/06845142",
+      "dph_status": "ok",
+      "nespolehlivy_platce": false,
+      "datum_zverejneni": null,
+      "dph_chyba": null,
+      "zdroj_dph": "https://adisrws.mfcr.cz/adistc/axis2/services/rozhraniCRPDPH.rozhraniCRPDPHSOAP?wsdl",
+      "sbirka_status": "failed",
+      "sbirka_chyba": "Chyba spojení s justice.cz: Expecting value: line 1 column 1 (char 0)",
+      "subjekt_id": null,
+      "link_sbirka_listin": "https://or.justice.cz/ias/ui/rejstrik-$firma?nazev=onlinesupp.com%20s.r.o.&ico=06845142",
+      "link_rejstrik": "https://or.justice.cz/ias/ui/rejstrik-$firma?nazev=onlinesupp.com%20s.r.o.&ico=06845142",
+      "chybi_zaverky_2023_2025": "nutno ověřit ručně",
+      "isir_status": "castecny_vysledek",
+      "isir_chyba": null,
+      "probiha_insolvence": "nutno ověřit ručně",
+      "link_isir": "https://isir.justice.cz/isir/common/index.do#hledani-ic=06845142",
+      "risk_flags": [
+        {
+          "signal": "Insolvenční rejstřík nelze automaticky vyhodnotit – nutná ruční kontrola",
+          "jistota": "neověřené – vyžaduje ruční kontrolu",
+          "zdroj": "https://isir.justice.cz/isir/common/index.do#hledani-ic=06845142"
+        },
+        {
+          "signal": "Sbírku listin nelze automaticky ověřit (chybějící účetní závěrky 2023–2025 nutno zkontrolovat ručně)",
+          "jistota": "neověřené – vyžaduje ruční kontrolu",
+          "zdroj": "https://or.justice.cz/ias/ui/rejstrik-$firma?nazev=onlinesupp.com%20s.r.o.&ico=06845142"
+        }
+      ],
+      "risk_level": "Střední (nutno ověřit)"
+    },
+    {
+      "ico": "07342071",
+      "include_historical": true,
+      "cas_analyzy": "18.06.2026 12:40",
+      "nazev": "(IČO nenalezeno v ARES)",
+      "sidlo": null,
+      "pravni_forma": null,
+      "stav": null,
+      "v_likvidaci": false,
+      "datum_vzniku": null,
+      "datum_zaniku": null,
+      "zdroj_ares": "https://ares.gov.cz/ekonomicke-subjekty-v-be/rest/ekonomicke-subjekty/07342071",
+      "ares_status": "nenalezeno_v_ares",
+      "ares_chyba": null,
+      "fallback_lookup_found": false,
+      "fallback_lookup_note": "IČO nebylo nalezeno v ARES. Připraveno dohledání přes Justice.cz a Kurzy.cz.",
+      "fallback_lookup_justice": "https://or.justice.cz/ias/ui/rejstrik-$firma?ico=07342071",
+      "fallback_lookup_kurzy": "https://rejstrik-firem.kurzy.cz/hledej/?s=07342071&r=True",
+      "osoby": [],
+      "navazane_firmy": [],
+      "vr_status": "nenalezeno",
+      "vr_chyba": null,
+      "zdroj_vr": "https://ares.gov.cz/ekonomicke-subjekty-v-be/rest/ekonomicke-subjekty-vr/07342071",
+      "dph_status": "ok",
+      "nespolehlivy_platce": false,
+      "datum_zverejneni": null,
+      "dph_chyba": null,
+      "zdroj_dph": "https://adisrws.mfcr.cz/adistc/axis2/services/rozhraniCRPDPH.rozhraniCRPDPHSOAP?wsdl",
+      "sbirka_status": "failed",
+      "sbirka_chyba": "Chyba spojení s justice.cz: Expecting value: line 1 column 1 (char 0)",
+      "subjekt_id": null,
+      "link_sbirka_listin": "https://or.justice.cz/ias/ui/rejstrik-$firma?nazev=%28I%C4%8CO%20nenalezeno%20v%20ARES%29&ico=07342071",
+      "link_rejstrik": "https://or.justice.cz/ias/ui/rejstrik-$firma?nazev=%28I%C4%8CO%20nenalezeno%20v%20ARES%29&ico=07342071",
+      "chybi_zaverky_2023_2025": "nutno ověřit ručně",
+      "isir_status": "castecny_vysledek",
+      "isir_chyba": null,
+      "probiha_insolvence": "nutno ověřit ručně",
+      "link_isir": "https://isir.justice.cz/isir/common/index.do#hledani-ic=07342071",
+      "risk_flags": [
+        {
+          "signal": "Insolvenční rejstřík nelze automaticky vyhodnotit – nutná ruční kontrola",
+          "jistota": "neověřené – vyžaduje ruční kontrolu",
+          "zdroj": "https://isir.justice.cz/isir/common/index.do#hledani-ic=07342071"
+        },
+        {
+          "signal": "Sbírku listin nelze automaticky ověřit (chybějící účetní závěrky 2023–2025 nutno zkontrolovat ručně)",
+          "jistota": "neověřené – vyžaduje ruční kontrolu",
+          "zdroj": "https://or.justice.cz/ias/ui/rejstrik-$firma?nazev=%28I%C4%8CO%20nenalezeno%20v%20ARES%29&ico=07342071"
+        }
+      ],
+      "risk_level": "Střední (nutno ověřit)"
+    }
+  ],
+  "selected_relationship_people_names": [
+    "JIŘÍ HOLAKOVSKÝ",
+    "MAREK TÁBORSKÝ",
+    "MARTIN PETRÍK",
+    "MICHAL KRAJČÍROVIČ",
+    "MILOŠ KINDL",
+    "Mgr. et Mgr. PETRA ŠRÁMKOVÁ HARANTOVÁ",
+    "NIVIA ROSA CANDANEDO DE VEGA",
+    "PAVEL ŠTUKAVEC"
+  ],
+  "selected_relationship_people_rows": [
+    {
+      "person_key": "04808100|Mgr. et Mgr. PETRA ŠRÁMKOVÁ HARANTOVÁ|jednatel|2016-02-12|2017-04-08",
+      "jmeno": "Mgr. et Mgr. PETRA ŠRÁMKOVÁ HARANTOVÁ",
+      "role": "jednatel",
+      "firma": "Agrogrip s.r.o.",
+      "ico": "04808100",
+      "stav_vazby": "Historická",
+      "kurzy_vazby_link": "https://rejstrik-firem.kurzy.cz/hledej/?s=Mgr.%20et%20Mgr.%20PETRA%20%C5%A0R%C3%81MKOV%C3%81%20HARANTOV%C3%81&r=False"
+    },
+    {
+      "person_key": "04808100|MAREK TÁBORSKÝ|jednatel|2017-04-08|None",
+      "jmeno": "MAREK TÁBORSKÝ",
+      "role": "jednatel",
+      "firma": "Agrogrip s.r.o.",
+      "ico": "04808100",
+      "stav_vazby": "Aktuální",
+      "kurzy_vazby_link": "https://rejstrik-firem.kurzy.cz/hledej/?s=MAREK%20T%C3%81BORSK%C3%9D&r=False"
+    },
+    {
+      "person_key": "04808100|MILOŠ KINDL|Společníci|2018-02-01|2026-04-10",
+      "jmeno": "MILOŠ KINDL",
+      "role": "Společníci",
+      "firma": "Agrogrip s.r.o.",
+      "ico": "04808100",
+      "stav_vazby": "Historická",
+      "kurzy_vazby_link": "https://rejstrik-firem.kurzy.cz/hledej/?s=MILO%C5%A0%20KINDL&r=False"
+    },
+    {
+      "person_key": "04808100|Mgr. et Mgr. PETRA ŠRÁMKOVÁ HARANTOVÁ|Společníci|2016-02-12|2017-04-08",
+      "jmeno": "Mgr. et Mgr. PETRA ŠRÁMKOVÁ HARANTOVÁ",
+      "role": "Společníci",
+      "firma": "Agrogrip s.r.o.",
+      "ico": "04808100",
+      "stav_vazby": "Historická",
+      "kurzy_vazby_link": "https://rejstrik-firem.kurzy.cz/hledej/?s=Mgr.%20et%20Mgr.%20PETRA%20%C5%A0R%C3%81MKOV%C3%81%20HARANTOV%C3%81&r=False"
+    },
+    {
+      "person_key": "04808100|MAREK TÁBORSKÝ|Společníci|2017-04-08|2018-02-01",
+      "jmeno": "MAREK TÁBORSKÝ",
+      "role": "Společníci",
+      "firma": "Agrogrip s.r.o.",
+      "ico": "04808100",
+      "stav_vazby": "Historická",
+      "kurzy_vazby_link": "https://rejstrik-firem.kurzy.cz/hledej/?s=MAREK%20T%C3%81BORSK%C3%9D&r=False"
+    },
+    {
+      "person_key": "04808100|MAREK TÁBORSKÝ|Společníci|2026-04-10|None",
+      "jmeno": "MAREK TÁBORSKÝ",
+      "role": "Společníci",
+      "firma": "Agrogrip s.r.o.",
+      "ico": "04808100",
+      "stav_vazby": "Aktuální",
+      "kurzy_vazby_link": "https://rejstrik-firem.kurzy.cz/hledej/?s=MAREK%20T%C3%81BORSK%C3%9D&r=False"
+    },
+    {
+      "person_key": "08726973|PAVEL ŠTUKAVEC|jednatel|2020-04-09|2025-05-31",
+      "jmeno": "PAVEL ŠTUKAVEC",
+      "role": "jednatel",
+      "firma": "main agency s.r.o.",
+      "ico": "08726973",
+      "stav_vazby": "Historická",
+      "kurzy_vazby_link": "https://rejstrik-firem.kurzy.cz/hledej/?s=PAVEL%20%C5%A0TUKAVEC&r=False"
+    },
+    {
+      "person_key": "08726973|MARTIN PETRÍK|Jednatel|2025-05-31|None",
+      "jmeno": "MARTIN PETRÍK",
+      "role": "Jednatel",
+      "firma": "main agency s.r.o.",
+      "ico": "08726973",
+      "stav_vazby": "Aktuální",
+      "kurzy_vazby_link": "https://rejstrik-firem.kurzy.cz/hledej/?s=MARTIN%20PETR%C3%8DK&r=False"
+    },
+    {
+      "person_key": "08726973|PAVEL ŠTUKAVEC|Společníci|2020-04-09|2025-03-21",
+      "jmeno": "PAVEL ŠTUKAVEC",
+      "role": "Společníci",
+      "firma": "main agency s.r.o.",
+      "ico": "08726973",
+      "stav_vazby": "Historická",
+      "kurzy_vazby_link": "https://rejstrik-firem.kurzy.cz/hledej/?s=PAVEL%20%C5%A0TUKAVEC&r=False"
+    },
+    {
+      "person_key": "08726973|MARTIN PETRÍK|Společníci|2025-03-21|None",
+      "jmeno": "MARTIN PETRÍK",
+      "role": "Společníci",
+      "firma": "main agency s.r.o.",
+      "ico": "08726973",
+      "stav_vazby": "Aktuální",
+      "kurzy_vazby_link": "https://rejstrik-firem.kurzy.cz/hledej/?s=MARTIN%20PETR%C3%8DK&r=False"
+    },
+    {
+      "person_key": "05892651|MICHAL KRAJČÍROVIČ|jednatel|2017-03-08|2018-01-17",
+      "jmeno": "MICHAL KRAJČÍROVIČ",
+      "role": "jednatel",
+      "firma": "Cloud Telecom ventures s.r.o.",
+      "ico": "05892651",
+      "stav_vazby": "Historická",
+      "kurzy_vazby_link": "https://rejstrik-firem.kurzy.cz/hledej/?s=MICHAL%20KRAJ%C4%8C%C3%8DROVI%C4%8C&r=False"
+    },
+    {
+      "person_key": "05892651|MICHAL KRAJČÍROVIČ|jednatel|2018-01-17|2019-08-14",
+      "jmeno": "MICHAL KRAJČÍROVIČ",
+      "role": "jednatel",
+      "firma": "Cloud Telecom ventures s.r.o.",
+      "ico": "05892651",
+      "stav_vazby": "Historická",
+      "kurzy_vazby_link": "https://rejstrik-firem.kurzy.cz/hledej/?s=MICHAL%20KRAJ%C4%8C%C3%8DROVI%C4%8C&r=False"
+    },
+    {
+      "person_key": "05892651|NIVIA ROSA CANDANEDO DE VEGA|jednatel|2019-08-14|None",
+      "jmeno": "NIVIA ROSA CANDANEDO DE VEGA",
+      "role": "jednatel",
+      "firma": "Cloud Telecom ventures s.r.o.",
+      "ico": "05892651",
+      "stav_vazby": "Aktuální",
+      "kurzy_vazby_link": "https://rejstrik-firem.kurzy.cz/hledej/?s=NIVIA%20ROSA%20CANDANEDO%20DE%20VEGA&r=False"
+    },
+    {
+      "person_key": "05892651|NIVIA ROSA CANDANEDO DE VEGA|Společníci|2019-08-14|None",
+      "jmeno": "NIVIA ROSA CANDANEDO DE VEGA",
+      "role": "Společníci",
+      "firma": "Cloud Telecom ventures s.r.o.",
+      "ico": "05892651",
+      "stav_vazby": "Aktuální",
+      "kurzy_vazby_link": "https://rejstrik-firem.kurzy.cz/hledej/?s=NIVIA%20ROSA%20CANDANEDO%20DE%20VEGA&r=False"
+    },
+    {
+      "person_key": "06845142|JIŘÍ HOLAKOVSKÝ|jednatel|2021-05-03|2022-03-23",
+      "jmeno": "JIŘÍ HOLAKOVSKÝ",
+      "role": "jednatel",
+      "firma": "onlinesupp.com s.r.o.",
+      "ico": "06845142",
+      "stav_vazby": "Historická",
+      "kurzy_vazby_link": "https://rejstrik-firem.kurzy.cz/hledej/?s=JI%C5%98%C3%8D%20HOLAKOVSK%C3%9D&r=False"
+    },
+    {
+      "person_key": "06845142|JIŘÍ HOLAKOVSKÝ|jednatel|2022-03-23|2024-02-10",
+      "jmeno": "JIŘÍ HOLAKOVSKÝ",
+      "role": "jednatel",
+      "firma": "onlinesupp.com s.r.o.",
+      "ico": "06845142",
+      "stav_vazby": "Historická",
+      "kurzy_vazby_link": "https://rejstrik-firem.kurzy.cz/hledej/?s=JI%C5%98%C3%8D%20HOLAKOVSK%C3%9D&r=False"
+    },
+    {
+      "person_key": "06845142|MICHAL KRAJČÍROVIČ|jednatel|2018-02-08|None",
+      "jmeno": "MICHAL KRAJČÍROVIČ",
+      "role": "jednatel",
+      "firma": "onlinesupp.com s.r.o.",
+      "ico": "06845142",
+      "stav_vazby": "Aktuální",
+      "kurzy_vazby_link": "https://rejstrik-firem.kurzy.cz/hledej/?s=MICHAL%20KRAJ%C4%8C%C3%8DROVI%C4%8C&r=False"
+    },
+    {
+      "person_key": "06845142|JIŘÍ HOLAKOVSKÝ|jednatel|2018-02-08|2021-05-03",
+      "jmeno": "JIŘÍ HOLAKOVSKÝ",
+      "role": "jednatel",
+      "firma": "onlinesupp.com s.r.o.",
+      "ico": "06845142",
+      "stav_vazby": "Historická",
+      "kurzy_vazby_link": "https://rejstrik-firem.kurzy.cz/hledej/?s=JI%C5%98%C3%8D%20HOLAKOVSK%C3%9D&r=False"
+    },
+    {
+      "person_key": "06845142|JIŘÍ HOLAKOVSKÝ|jednatel|2024-02-10|None",
+      "jmeno": "JIŘÍ HOLAKOVSKÝ",
+      "role": "jednatel",
+      "firma": "onlinesupp.com s.r.o.",
+      "ico": "06845142",
+      "stav_vazby": "Aktuální",
+      "kurzy_vazby_link": "https://rejstrik-firem.kurzy.cz/hledej/?s=JI%C5%98%C3%8D%20HOLAKOVSK%C3%9D&r=False"
+    },
+    {
+      "person_key": "06845142|JIŘÍ HOLAKOVSKÝ|Společníci|2021-05-03|2022-03-23",
+      "jmeno": "JIŘÍ HOLAKOVSKÝ",
+      "role": "Společníci",
+      "firma": "onlinesupp.com s.r.o.",
+      "ico": "06845142",
+      "stav_vazby": "Historická",
+      "kurzy_vazby_link": "https://rejstrik-firem.kurzy.cz/hledej/?s=JI%C5%98%C3%8D%20HOLAKOVSK%C3%9D&r=False"
+    },
+    {
+      "person_key": "06845142|JIŘÍ HOLAKOVSKÝ|Společníci|2022-03-23|2024-02-10",
+      "jmeno": "JIŘÍ HOLAKOVSKÝ",
+      "role": "Společníci",
+      "firma": "onlinesupp.com s.r.o.",
+      "ico": "06845142",
+      "stav_vazby": "Historická",
+      "kurzy_vazby_link": "https://rejstrik-firem.kurzy.cz/hledej/?s=JI%C5%98%C3%8D%20HOLAKOVSK%C3%9D&r=False"
+    },
+    {
+      "person_key": "06845142|MICHAL KRAJČÍROVIČ|Společníci|2018-02-08|None",
+      "jmeno": "MICHAL KRAJČÍROVIČ",
+      "role": "Společníci",
+      "firma": "onlinesupp.com s.r.o.",
+      "ico": "06845142",
+      "stav_vazby": "Aktuální",
+      "kurzy_vazby_link": "https://rejstrik-firem.kurzy.cz/hledej/?s=MICHAL%20KRAJ%C4%8C%C3%8DROVI%C4%8C&r=False"
+    },
+    {
+      "person_key": "06845142|JIŘÍ HOLAKOVSKÝ|Společníci|2018-02-08|2021-05-03",
+      "jmeno": "JIŘÍ HOLAKOVSKÝ",
+      "role": "Společníci",
+      "firma": "onlinesupp.com s.r.o.",
+      "ico": "06845142",
+      "stav_vazby": "Historická",
+      "kurzy_vazby_link": "https://rejstrik-firem.kurzy.cz/hledej/?s=JI%C5%98%C3%8D%20HOLAKOVSK%C3%9D&r=False"
+    },
+    {
+      "person_key": "06845142|JIŘÍ HOLAKOVSKÝ|Společníci|2024-02-10|None",
+      "jmeno": "JIŘÍ HOLAKOVSKÝ",
+      "role": "Společníci",
+      "firma": "onlinesupp.com s.r.o.",
+      "ico": "06845142",
+      "stav_vazby": "Aktuální",
+      "kurzy_vazby_link": "https://rejstrik-firem.kurzy.cz/hledej/?s=JI%C5%98%C3%8D%20HOLAKOVSK%C3%9D&r=False"
+    }
+  ],
+  "relationship_include_all_entities": true,
+  "cross_analysis_people": [],
+  "cross_analysis_enabled": false,
+  "cross_people_text": "",
+  "cross_ico_text": "",
+  "extra_relationship_ico_text": "",
+  "auto_include_all_entities_extra": true,
+  "compare_all_entities_global": false,
+  "pending_select_all_entities": false
+}

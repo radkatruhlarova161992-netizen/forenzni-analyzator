@@ -1,0 +1,1 @@
+"""Sdílené jádro aplikace."""
