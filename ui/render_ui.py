@@ -26,6 +26,7 @@ def render_ui(
         "include_historical": False,
         "expansion_depth": 1,
         "auto_include_all_entities_initial": False,
+        "include_public_aggregators": False,
         "run_cross_analysis": False,
         "refresh_data": False,
         "cross_people_text": "",

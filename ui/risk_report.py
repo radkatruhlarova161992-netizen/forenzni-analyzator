@@ -22,6 +22,7 @@ def render_case_screen(results: list[dict[str, Any]], relationship_scope: str) -
         "include_historical": st.session_state.get("relationship_scope") == "Aktuální i historické",
         "expansion_depth": st.session_state.get("expansion_depth", 1),
         "auto_include_all_entities_initial": st.session_state.get("auto_include_all_entities_initial", False),
+        "include_public_aggregators": st.session_state.get("include_public_aggregators", False),
         "run_analysis": False,
         "refresh_data": False,
         "reset_case": False,
@@ -39,6 +40,13 @@ def render_case_screen(results: list[dict[str, Any]], relationship_scope: str) -
                 f"{analysis_summary.get('auto_added_companies', 0)} nových firem a "
                 f"{analysis_summary.get('new_people', 0)} nových osob."
             )
+        gap_warnings = [
+            record.get("external_gap_warning")
+            for record in results
+            if record.get("external_gap_warning")
+        ]
+        for warning in gap_warnings[:3]:
+            st.warning(warning)
         render_key_findings_intro(results)
         render_dashboard(results)
         with st.expander("Co to znamená?", expanded=True):
@@ -66,6 +74,7 @@ def render_case_screen(results: list[dict[str, Any]], relationship_scope: str) -
                     actions["include_historical"],
                     actions["expansion_depth"],
                     actions["auto_include_all_entities_initial"],
+                    actions["include_public_aggregators"],
                     actions["run_analysis"],
                     actions["refresh_data"],
                 ) = render_input_controls()
@@ -80,6 +89,7 @@ def render_case_screen(results: list[dict[str, Any]], relationship_scope: str) -
                 actions["include_historical"],
                 actions["expansion_depth"],
                 actions["auto_include_all_entities_initial"],
+                actions["include_public_aggregators"],
                 actions["run_analysis"],
                 actions["refresh_data"],
             ) = render_input_controls(homepage_mode=True)

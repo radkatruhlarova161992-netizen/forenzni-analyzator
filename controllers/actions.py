@@ -14,6 +14,7 @@ def reset_current_case() -> None:
     reset_values: dict[str, Any] = {
         "results": [],
         "input_text": "",
+        "include_public_aggregators": False,
         "selected_relationship_people_names": [],
         "selected_relationship_people_rows": [],
         "relationship_include_all_entities": False,
@@ -74,6 +75,7 @@ def handle_initial_analysis(
     include_historical: bool,
     expansion_depth: int,
     auto_include_all_entities_initial: bool,
+    include_public_aggregators: bool,
     force_refresh: bool = False,
     default_icos: list[str] | None = None,
 ) -> None:
@@ -91,6 +93,7 @@ def handle_initial_analysis(
         include_historical=include_historical,
         replace=True,
         expansion_depth=expansion_depth,
+        include_public_aggregators=include_public_aggregators,
         force_refresh=force_refresh,
     )
     st.session_state["last_analysis_summary"] = summary
@@ -139,6 +142,7 @@ def handle_ui_actions(
                 include_historical=include_historical,
                 replace=False,
                 expansion_depth=st.session_state.get("expansion_depth", 1),
+                include_public_aggregators=st.session_state.get("include_public_aggregators", False),
                 force_refresh=False,
             )
             if added_count:
@@ -173,6 +177,7 @@ def handle_ui_actions(
             include_historical=include_historical,
             replace=False,
             expansion_depth=st.session_state.get("expansion_depth", 1),
+            include_public_aggregators=st.session_state.get("include_public_aggregators", False),
             force_refresh=False,
         )
         if added_count == 0:

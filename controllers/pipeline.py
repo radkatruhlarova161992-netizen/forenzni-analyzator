@@ -14,11 +14,13 @@ from core.utils import clean_ico
 def run_pipeline_for_ico(
     ico: str,
     include_historical: bool,
+    include_public_aggregators: bool = False,
     force_refresh: bool = False,
 ) -> dict[str, Any]:
     source_data = fetch_company_data(
         ico,
         include_historical=include_historical,
+        include_public_aggregators=include_public_aggregators,
         force_refresh=force_refresh,
     )
     normalized = normalize_entities(source_data)
@@ -41,6 +43,7 @@ def analyze_icos(
     include_historical: bool,
     replace: bool,
     expansion_depth: int = 1,
+    include_public_aggregators: bool = False,
     force_refresh: bool = False,
 ) -> tuple[list[dict[str, Any]], int, dict[str, int]]:
     existing_results = [] if replace else st.session_state.get("results", [])
@@ -72,6 +75,7 @@ def analyze_icos(
         record = run_pipeline_for_ico(
             ico,
             include_historical=include_historical,
+            include_public_aggregators=include_public_aggregators,
             force_refresh=force_refresh,
         )
         existing_by_ico[ico] = record

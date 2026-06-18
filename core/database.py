@@ -96,6 +96,15 @@ def initialize_database() -> None:
                 PRIMARY KEY (ico, include_historical)
             );
 
+            CREATE TABLE IF NOT EXISTS company_cache_v2 (
+                ico TEXT NOT NULL,
+                include_historical INTEGER NOT NULL DEFAULT 0,
+                include_public_aggregators INTEGER NOT NULL DEFAULT 0,
+                payload_json TEXT NOT NULL,
+                posledni_aktualizace TEXT NOT NULL,
+                PRIMARY KEY (ico, include_historical, include_public_aggregators)
+            );
+
             CREATE TABLE IF NOT EXISTS metadata (
                 key TEXT PRIMARY KEY,
                 value TEXT
@@ -119,16 +128,17 @@ def initialize_database() -> None:
 def load_cached_source_data(
     ico: str,
     include_historical: bool,
+    include_public_aggregators: bool = False,
     max_age_days: int = CACHE_MAX_AGE_DAYS,
 ) -> dict[str, Any] | None:
     with get_connection() as connection:
         row = connection.execute(
             """
             SELECT payload_json, posledni_aktualizace
-            FROM company_cache
-            WHERE ico = ? AND include_historical = ?
+            FROM company_cache_v2
+            WHERE ico = ? AND include_historical = ? AND include_public_aggregators = ?
             """,
-            (ico, int(include_historical)),
+            (ico, int(include_historical), int(include_public_aggregators)),
         ).fetchone()
 
     if not row:
@@ -149,20 +159,24 @@ def load_cached_source_data(
 def save_cached_source_data(
     ico: str,
     include_historical: bool,
+    include_public_aggregators: bool,
     payload: dict[str, Any],
 ) -> None:
     with get_connection() as connection:
         connection.execute(
             """
-            INSERT INTO company_cache (ico, include_historical, payload_json, posledni_aktualizace)
-            VALUES (?, ?, ?, ?)
-            ON CONFLICT(ico, include_historical) DO UPDATE SET
+            INSERT INTO company_cache_v2 (
+                ico, include_historical, include_public_aggregators, payload_json, posledni_aktualizace
+            )
+            VALUES (?, ?, ?, ?, ?)
+            ON CONFLICT(ico, include_historical, include_public_aggregators) DO UPDATE SET
                 payload_json = excluded.payload_json,
                 posledni_aktualizace = excluded.posledni_aktualizace
             """,
             (
                 ico,
                 int(include_historical),
+                int(include_public_aggregators),
                 json.dumps(payload, ensure_ascii=False),
                 now_utc_iso(),
             ),
@@ -383,16 +397,23 @@ def save_company_record(record: dict[str, Any]) -> None:
             )
 
 
-def list_cached_subjects() -> list[tuple[str, bool]]:
+def list_cached_subjects() -> list[tuple[str, bool, bool]]:
     with get_connection() as connection:
         rows = connection.execute(
             """
-            SELECT ico, include_historical
-            FROM company_cache
-            ORDER BY ico
+            SELECT ico, include_historical, include_public_aggregators
+            FROM company_cache_v2
+            ORDER BY ico, include_public_aggregators
             """
         ).fetchall()
-    return [(str(row["ico"]), bool(row["include_historical"])) for row in rows]
+    return [
+        (
+            str(row["ico"]),
+            bool(row["include_historical"]),
+            bool(row["include_public_aggregators"]),
+        )
+        for row in rows
+    ]
 
 
 def get_metadata(key: str) -> str | None:

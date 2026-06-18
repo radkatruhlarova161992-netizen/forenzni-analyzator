@@ -208,6 +208,20 @@ def build_shared_addresses_view(results: list[dict[str, Any]]) -> pd.DataFrame:
             }
         )
 
+        for relation in record.get("navazane_firmy", []) or []:
+            relation_address = relation.get("adresa")
+            if not relation_address:
+                continue
+            if relation.get("entity_type") != "address" and relation.get("typ_vazby") != "společná adresa":
+                continue
+            address_rows.append(
+                {
+                    "Adresa": relation_address,
+                    "Firma": record.get("nazev") or "(neznámý název)",
+                    "IČO": record.get("ico") or "",
+                }
+            )
+
     if not address_rows:
         return pd.DataFrame(columns=["Adresa", "Počet firem", "Seznam firem"])
 

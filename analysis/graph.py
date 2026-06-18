@@ -45,6 +45,8 @@ def find_company_links(records: list[dict[str, Any]]) -> pd.DataFrame:
     rows: list[dict[str, Any]] = []
     for rec in records:
         for company in rec.get("navazane_firmy", []) or []:
+            if company.get("entity_type") not in (None, "", "company", "unknown"):
+                continue
             rows.append(
                 {
                     "Výchozí firma": rec.get("nazev") or "(neznámý název)",
@@ -111,6 +113,12 @@ def build_participant_edges(records: list[dict[str, Any]]) -> pd.DataFrame:
             participant_name = linked_company.get("firma")
             participant_ico = linked_company.get("ico")
             if participant_name:
+                participant_type = linked_company.get("entity_type") or "company"
+                participant_type_label = {
+                    "company": "Firma",
+                    "person": "Osoba",
+                    "address": "Adresa",
+                }.get(participant_type, "Jiný subjekt")
                 rows.append(
                     {
                         "Firma": company_name,
@@ -120,7 +128,7 @@ def build_participant_edges(records: list[dict[str, Any]]) -> pd.DataFrame:
                             if participant_ico
                             else participant_name
                         ),
-                        "Typ účastníka": "Firma",
+                        "Typ účastníka": participant_type_label,
                         "Role": linked_company.get("role"),
                         "Stav vazby": linked_company.get("stav_vazby"),
                         "Od": linked_company.get("od"),

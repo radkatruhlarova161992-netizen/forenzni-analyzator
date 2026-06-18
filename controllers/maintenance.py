@@ -25,14 +25,20 @@ def refresh_cached_subjects_if_due() -> None:
     if last_run and datetime.now(UTC) - last_run < timedelta(days=WEEKLY_REFRESH_INTERVAL_DAYS):
         return
 
-    for ico, include_historical in list_cached_subjects():
+    for ico, include_historical, include_public_aggregators in list_cached_subjects():
         try:
             source_data = fetch_company_data(
                 ico,
                 include_historical=include_historical,
+                include_public_aggregators=include_public_aggregators,
                 force_refresh=True,
             )
-            save_cached_source_data(ico, include_historical, source_data)
+            save_cached_source_data(
+                ico,
+                include_historical,
+                include_public_aggregators,
+                source_data,
+            )
             record = calculate_risk_signals(normalize_entities(source_data))
             save_company_record(record)
         except Exception:

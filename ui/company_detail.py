@@ -183,7 +183,23 @@ def render_company_detail_section(
                     st.info(record.get("vazby_fallback_note"))
                     if record.get("zdroj_vr"):
                         st.markdown(f"[🔗 Zdroj vazeb]({record.get('zdroj_vr')})")
+                if record.get("external_gap_warning"):
+                    st.warning(record.get("external_gap_warning"))
                 st.markdown(f"[🔗 Zdroj – ARES]({record.get('zdroj_ares')})")
+
+                diagnostics = record.get("relationship_diagnostics") or {}
+                if diagnostics:
+                    st.markdown("**Diagnostika vazeb**")
+                    diag_col1, diag_col2, diag_col3 = st.columns(3)
+                    with diag_col1:
+                        st.metric("ARES", diagnostics.get("ares", 0))
+                        st.metric("Justice", diagnostics.get("justice", 0))
+                    with diag_col2:
+                        st.metric("Kurzy", diagnostics.get("kurzy", 0))
+                        st.metric("Sloučeno", diagnostics.get("merged", 0))
+                    with diag_col3:
+                        st.metric("Vynecháno", diagnostics.get("skipped", 0))
+                        st.metric("Čeká na IČO", record.get("pending_ico_relationship_count", 0))
 
             with c2:
                 st.markdown(
@@ -200,6 +216,18 @@ def render_company_detail_section(
                         if flag["zdroj"]
                         else f"Jistota: {flag['jistota']}"
                     )
+
+            st.markdown("---")
+            counts_col1, counts_col2, counts_col3 = st.columns(3)
+            with counts_col1:
+                st.metric("Ověřené vazby", record.get("verified_relationship_count", 0))
+            with counts_col2:
+                st.metric(
+                    "Neověřené externí",
+                    record.get("unverified_external_relationship_count", 0),
+                )
+            with counts_col3:
+                st.metric("Čekají na IČO", record.get("pending_ico_relationship_count", 0))
 
             st.markdown("---")
             st.markdown("**Osoby spojené s firmou**")
@@ -258,10 +286,24 @@ def render_company_detail_section(
                     )
 
             st.markdown("---")
-            st.markdown("**Navázané firmy**")
+            st.markdown("**Navázané subjekty**")
             navazane_firmy = record.get("navazane_firmy", [])
             if navazane_firmy:
-                st.dataframe(pd.DataFrame(navazane_firmy), use_container_width=True)
+                relationship_rows = []
+                for item in navazane_firmy:
+                    relationship_rows.append(
+                        {
+                            "Subjekt": item.get("firma") or item.get("nazev"),
+                            "IČO": item.get("ico"),
+                            "Adresa": item.get("adresa"),
+                            "Typ vazby": item.get("typ_vazby") or item.get("role"),
+                            "Stav": item.get("verification_status") or item.get("stav_vazby"),
+                            "Zdroj": item.get("source_name") or item.get("zdroj_cast"),
+                            "Důvěryhodnost": item.get("confidence"),
+                            "Ověření": item.get("source_url") or item.get("kurzy_vazby_link"),
+                        }
+                    )
+                st.dataframe(pd.DataFrame(relationship_rows), use_container_width=True)
             elif record.get("vr_status") == "historical_only":
                 st.info(
                     record.get("vazby_fallback_note")

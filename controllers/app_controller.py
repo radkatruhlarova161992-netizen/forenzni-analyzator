@@ -26,6 +26,9 @@ def persist_state() -> None:
             "auto_include_all_entities_initial": st.session_state.get(
                 "auto_include_all_entities_initial", False
             ),
+            "include_public_aggregators": st.session_state.get(
+                "include_public_aggregators", False
+            ),
             "results": st.session_state.get("results", []),
             "last_analysis_summary": st.session_state.get(
                 "last_analysis_summary", None
@@ -108,6 +111,7 @@ def run_app_controller(current_screen: str) -> None:
             actions["include_historical"],
             actions["expansion_depth"],
             actions["auto_include_all_entities_initial"],
+            actions["include_public_aggregators"],
             force_refresh=False,
         )
         persist_state()
@@ -120,6 +124,7 @@ def run_app_controller(current_screen: str) -> None:
             actions["include_historical"],
             actions["expansion_depth"],
             actions["auto_include_all_entities_initial"],
+            actions["include_public_aggregators"],
             force_refresh=True,
             default_icos=current_icos,
         )

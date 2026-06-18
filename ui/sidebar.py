@@ -8,6 +8,7 @@ DEFAULT_SESSION_STATE: dict[str, Any] = {
     "input_text": "",
     "relationship_scope": "Jen aktuální",
     "expansion_depth": 1,
+    "include_public_aggregators": False,
     "auto_include_all_entities_initial": False,
     "results": [],
     "last_analysis_summary": None,
@@ -230,7 +231,7 @@ def render_sources_info() -> None:
 def render_input_controls(
     *,
     homepage_mode: bool = False,
-) -> tuple[str, bool, int, bool, bool, bool]:
+) -> tuple[str, bool, int, bool, bool, bool, bool]:
     if homepage_mode:
         search_col, action_col = st.columns([3.9, 1.7], gap="small")
         with search_col:
@@ -274,6 +275,14 @@ def render_input_controls(
                 "Pro vazby osob a firem vyber všechny osoby i firmy spojené s firmou",
                 key="auto_include_all_entities_initial",
             )
+            include_public_aggregators = st.checkbox(
+                "Rozšířené vazby z veřejných agregátorů",
+                key="include_public_aggregators",
+                help=(
+                    "Načte doplňkové vazby z veřejných agregátorů, například Kurzy.cz. "
+                    "Tyto vazby budou označeny jako nutné k ověření."
+                ),
+            )
             refresh_data = st.button("Aktualizovat data", use_container_width=True)
     else:
         input_text = st.text_area(
@@ -311,6 +320,14 @@ def render_input_controls(
             "Pro vazby osob a firem vyber všechny osoby i firmy spojené s firmou",
             key="auto_include_all_entities_initial",
         )
+        include_public_aggregators = st.checkbox(
+            "Rozšířené vazby z veřejných agregátorů",
+            key="include_public_aggregators",
+            help=(
+                "Načte doplňkové vazby z veřejných agregátorů, například Kurzy.cz. "
+                "Tyto vazby budou označeny jako nutné k ověření."
+            ),
+        )
 
         col1, col2, _ = st.columns([1, 1, 3])
         with col1:
@@ -323,6 +340,7 @@ def render_input_controls(
         include_historical,
         expansion_depth,
         auto_include_all_entities_initial,
+        include_public_aggregators,
         run_analysis,
         refresh_data,
     )

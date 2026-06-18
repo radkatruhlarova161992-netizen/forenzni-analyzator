@@ -10,6 +10,7 @@ from sources.adis import fetch_dph_status
 from sources.ares import fetch_ares_basic, fetch_ares_persons
 from sources.isir import fetch_isir_status
 from sources.justice import fetch_justice_person_relationships, fetch_sbirka_listin
+from sources.kurzy_relationships import fetch_kurzy_relationships
 
 
 def _should_try_person_relationship_lookup(
@@ -33,6 +34,7 @@ def clear_source_function_caches() -> None:
 def _fetch_company_data_from_sources(
     ico: str,
     include_historical: bool = False,
+    include_public_aggregators: bool = False,
 ) -> dict[str, Any]:
     ares_data = fetch_ares_basic(ico)
     vr_data = fetch_ares_persons(ico, include_historical=include_historical)
@@ -47,26 +49,36 @@ def _fetch_company_data_from_sources(
     dph_data = fetch_dph_status(ico)
     sbirka_data = fetch_sbirka_listin(ico, ares_data.get("nazev") or "")
     isir_data = fetch_isir_status(ico)
+    kurzy_relationships_data = (
+        fetch_kurzy_relationships(ico) if include_public_aggregators else None
+    )
 
     return {
         "ico": ico,
         "include_historical": include_historical,
+        "include_public_aggregators": include_public_aggregators,
         "ares": ares_data,
         "vr": vr_data,
         "dph": dph_data,
         "sbirka": sbirka_data,
         "isir": isir_data,
+        "kurzy_relationships": kurzy_relationships_data,
     }
 
 
 def fetch_company_data(
     ico: str,
     include_historical: bool = False,
+    include_public_aggregators: bool = False,
     force_refresh: bool = False,
 ) -> dict[str, Any]:
     """Načte data z lokální cache nebo z veřejných zdrojů bez UI logiky."""
     if not force_refresh:
-        cached_data = load_cached_source_data(ico, include_historical)
+        cached_data = load_cached_source_data(
+            ico,
+            include_historical,
+            include_public_aggregators,
+        )
         if cached_data:
             return cached_data
 
@@ -74,9 +86,97 @@ def fetch_company_data(
     source_data = _fetch_company_data_from_sources(
         ico,
         include_historical=include_historical,
+        include_public_aggregators=include_public_aggregators,
     )
-    save_cached_source_data(ico, include_historical, source_data)
+    save_cached_source_data(
+        ico,
+        include_historical,
+        include_public_aggregators,
+        source_data,
+    )
     return source_data
+
+
+def _build_primary_relationship_diagnostics(record: dict[str, Any]) -> dict[str, int]:
+    ares_count = 0
+    justice_count = 0
+    for person in record.get("osoby", []) or []:
+        source = str(person.get("zdroj_cast") or "")
+        if "Justice" in source:
+            justice_count += 1
+        else:
+            ares_count += 1
+    for company in record.get("navazane_firmy", []) or []:
+        source = str(company.get("zdroj_cast") or "")
+        if "Justice" in source:
+            justice_count += 1
+        else:
+            ares_count += 1
+    return {
+        "ares": ares_count,
+        "justice": justice_count,
+    }
+
+
+def _relationship_signature(item: dict[str, Any]) -> tuple[str, ...]:
+    ico = str(item.get("ico") or "").strip()
+    if ico:
+        return ("ico", ico)
+    return (
+        "name_address",
+        " ".join(str(item.get("firma") or item.get("nazev") or "").lower().split()),
+        " ".join(str(item.get("adresa") or "").lower().split()),
+    )
+
+
+def _merge_relationships(
+    primary_relationships: list[dict[str, Any]],
+    kurzy_relationships: list[dict[str, Any]],
+) -> tuple[list[dict[str, Any]], int]:
+    merged: list[dict[str, Any]] = []
+    skipped = 0
+    seen: set[tuple[str, ...]] = set()
+
+    for relationship in primary_relationships:
+        normalized = {
+            **relationship,
+            "source_name": relationship.get("source_name")
+            or (
+                "Justice.cz"
+                if "Justice" in str(relationship.get("zdroj_cast") or "")
+                else "ARES / veřejný rejstřík"
+            ),
+            "source_url": relationship.get("source_url")
+            or relationship.get("kurzy_vazby_link"),
+            "confidence": relationship.get("confidence") or "high",
+            "verification_status": relationship.get("verification_status")
+            or "ověřeno primárním zdrojem",
+        }
+        signature = _relationship_signature(normalized)
+        if signature in seen:
+            skipped += 1
+            continue
+        seen.add(signature)
+        merged.append(normalized)
+
+    for relationship in kurzy_relationships:
+        normalized = {
+            **relationship,
+            "source_name": relationship.get("source_name") or "Kurzy.cz",
+            "source_url": relationship.get("source_url")
+            or relationship.get("kurzy_vazby_link"),
+            "confidence": relationship.get("confidence") or "medium",
+            "verification_status": relationship.get("verification_status")
+            or "nutno ověřit",
+        }
+        signature = _relationship_signature(normalized)
+        if signature in seen:
+            skipped += 1
+            continue
+        seen.add(signature)
+        merged.append(normalized)
+
+    return merged, skipped
 
 
 def normalize_entities(source_data: dict[str, Any]) -> dict[str, Any]:
@@ -91,6 +191,45 @@ def normalize_entities(source_data: dict[str, Any]) -> dict[str, Any]:
     record.update(source_data.get("dph", {}))
     record.update(source_data.get("sbirka", {}))
     record.update(source_data.get("isir", {}))
+
+    primary_diagnostics = _build_primary_relationship_diagnostics(record)
+    kurzy_data = source_data.get("kurzy_relationships") or {}
+    kurzy_relationships = kurzy_data.get("relationships", []) or []
+    merged_relationships, merged_skipped = _merge_relationships(
+        record.get("navazane_firmy", []) or [],
+        kurzy_relationships,
+    )
+    record["navazane_firmy"] = merged_relationships
+    record["relationship_diagnostics"] = {
+        "ares": primary_diagnostics["ares"],
+        "justice": primary_diagnostics["justice"],
+        "kurzy": len(kurzy_relationships),
+        "merged": len(merged_relationships),
+        "skipped": merged_skipped,
+    }
+    record["verified_relationship_count"] = (
+        primary_diagnostics["ares"] + primary_diagnostics["justice"]
+    )
+    record["unverified_external_relationship_count"] = len(
+        [item for item in merged_relationships if item.get("source_name") == "Kurzy.cz"]
+    )
+    record["pending_ico_relationship_count"] = len(
+        [
+            item
+            for item in merged_relationships
+            if item.get("source_name") == "Kurzy.cz" and not item.get("ico")
+        ]
+    )
+    if (
+        len(kurzy_relationships) >= record["verified_relationship_count"] + 5
+        and len(kurzy_relationships) > record["verified_relationship_count"]
+    ):
+        record["external_gap_warning"] = (
+            f"Z Kurzy.cz bylo nalezeno {len(kurzy_relationships)} možných vazeb, "
+            f"ale pouze {record['verified_relationship_count']} bylo plně ověřeno přes primární zdroje."
+        )
+    else:
+        record["external_gap_warning"] = None
     return record
 
 
