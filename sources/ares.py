@@ -8,6 +8,7 @@ import requests
 from core.config import ARES_URL, ARES_VR_URL, HEADERS, JUSTICE_VYPIS_URL, REQUEST_TIMEOUT
 from core.utils import clean_ico, format_kurzy_search_link, format_role_status
 from sources.company_lookup import find_company_by_ico
+from sources.hlidac import fetch_hlidac_relationships
 from sources.kurzy import build_fallback_sources_for_ico
 
 
@@ -261,6 +262,16 @@ def fetch_ares_persons(ico: str, include_historical: bool = False) -> dict[str, 
             ARES_VR_URL.format(ico=ico), headers=HEADERS, timeout=REQUEST_TIMEOUT
         )
         if resp.status_code == 404:
+            hlidac_result = fetch_hlidac_relationships(
+                ico,
+                include_historical=include_historical,
+            )
+            if (
+                hlidac_result.get("osoby")
+                or hlidac_result.get("navazane_firmy")
+                or hlidac_result.get("vr_status") == "historical_only"
+            ):
+                return hlidac_result
             out["vr_status"] = "nenalezeno"
             return out
 
@@ -320,6 +331,20 @@ def fetch_ares_persons(ico: str, include_historical: bool = False) -> dict[str, 
         out["navazane_firmy"] = dedupe_relationships(
             out["navazane_firmy"], ("firma", "ico", "role", "od", "do", "stav_vazby")
         )
+        if out["osoby"] or out["navazane_firmy"]:
+            out["vr_status"] = "ok"
+            return out
+
+        hlidac_result = fetch_hlidac_relationships(
+            ico,
+            include_historical=include_historical,
+        )
+        if (
+            hlidac_result.get("osoby")
+            or hlidac_result.get("navazane_firmy")
+            or hlidac_result.get("vr_status") == "historical_only"
+        ):
+            return hlidac_result
         out["vr_status"] = "ok"
     except requests.exceptions.Timeout:
         out["vr_status"] = "failed"
@@ -330,5 +355,17 @@ def fetch_ares_persons(ico: str, include_historical: bool = False) -> dict[str, 
     except (ValueError, KeyError) as exc:
         out["vr_status"] = "failed"
         out["vr_chyba"] = f"Neočekávaný formát odpovědi ARES VR: {exc}"
+
+    if out["vr_status"] in {"failed", "nenalezeno"}:
+        hlidac_result = fetch_hlidac_relationships(
+            ico,
+            include_historical=include_historical,
+        )
+        if (
+            hlidac_result.get("osoby")
+            or hlidac_result.get("navazane_firmy")
+            or hlidac_result.get("vr_status") == "historical_only"
+        ):
+            return hlidac_result
 
     return out

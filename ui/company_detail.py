@@ -179,6 +179,10 @@ def render_company_detail_section(
                             f"[🔗 Zdroj fallbacku – {record.get('fallback_lookup_source_name')}]"
                             f"({record.get('fallback_lookup_source_url')})"
                         )
+                if record.get("vazby_fallback_note"):
+                    st.info(record.get("vazby_fallback_note"))
+                    if record.get("zdroj_vr"):
+                        st.markdown(f"[🔗 Zdroj vazeb]({record.get('zdroj_vr')})")
                 st.markdown(f"[🔗 Zdroj – ARES]({record.get('zdroj_ares')})")
 
             with c2:
@@ -242,6 +246,11 @@ def render_company_detail_section(
                 vr_status = record.get("vr_status")
                 if vr_status == "ok":
                     st.write("Ve zdroji nebyly dohledány žádné osoby.")
+                elif vr_status == "historical_only":
+                    st.info(
+                        record.get("vazby_fallback_note")
+                        or "Pro tento subjekt jsou dostupné jen historické vazby. Přepni na „Aktuální i historické“."
+                    )
                 else:
                     st.info(
                         f"Osoby se nepodařilo automaticky dohledat. "
@@ -253,6 +262,11 @@ def render_company_detail_section(
             navazane_firmy = record.get("navazane_firmy", [])
             if navazane_firmy:
                 st.dataframe(pd.DataFrame(navazane_firmy), use_container_width=True)
+            elif record.get("vr_status") == "historical_only":
+                st.info(
+                    record.get("vazby_fallback_note")
+                    or "Navázané firmy jsou dostupné jen v historických vazbách. Přepni na „Aktuální i historické“."
+                )
             else:
                 st.write("Žádné další navázané firmy se nepodařilo vyčíst.")
 
