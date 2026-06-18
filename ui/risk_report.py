@@ -70,8 +70,8 @@ def render_case_screen(results: list[dict[str, Any]], relationship_scope: str) -
     else:
         render_landing_sections()
         with st.container(border=True):
-            st.markdown("### Nová analýza")
-            st.caption("Vlož IČA a spusť analýzu.")
+            st.markdown("### 🔎 Nová analýza")
+            st.caption("Vložte jedno nebo více IČO. Každé IČO může být na samostatném řádku.")
             render_new_case_action("overview_empty")
             (
                 actions["input_text"],
@@ -94,55 +94,308 @@ def render_landing_sections() -> None:
     st.markdown(
         """
         <style>
-        .connexa-grid {
+        .connexa-home {
+            padding: 1.1rem 0 0.7rem 0;
+        }
+        .connexa-hero-layout {
             display:grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 14px;
-            margin: 0.35rem 0 0.8rem 0;
+            grid-template-columns: minmax(280px, 0.92fr) minmax(360px, 1.08fr);
+            gap: clamp(1.5rem, 5vw, 4rem);
+            align-items:center;
         }
-        .connexa-card {
-            background: #F8FAFC;
-            border: 1px solid #E2E8F0;
-            border-radius: 10px;
-            padding: 14px 16px;
+        .connexa-eyebrow {
+            color:#3158F6;
+            font-weight:800;
+            font-size:0.88rem;
+            margin-bottom:0.8rem;
+            letter-spacing:0;
         }
-        .connexa-card-title {
-            font-size: 1rem;
-            font-weight: 700;
-            color: #1E3A5F;
-            margin-bottom: 10px;
+        .connexa-title {
+            margin:0;
+            max-width:720px;
+            color:#06143A;
+            font-size:clamp(2.55rem, 5.2vw, 5.25rem);
+            line-height:1.06;
+            font-weight:850;
+            letter-spacing:0;
         }
-        .connexa-step, .connexa-capability {
+        .connexa-title span {color:#3158F6;}
+        .connexa-lead {
+            max-width:650px;
+            color:#475777;
+            font-size:clamp(1.05rem, 1.6vw, 1.28rem);
+            line-height:1.55;
+            margin:1.35rem 0 1.55rem 0;
+        }
+        .connexa-hero-hint {
+            color:#5D6B8A;
+            font-size:0.9rem;
+            margin:0.35rem 0 0 0.1rem;
+        }
+        .connexa-stat-row {
             display:flex;
-            align-items:flex-start;
-            gap:10px;
-            color:#0F172A;
-            margin: 0 0 10px 0;
-            line-height:1.35;
+            flex-wrap:wrap;
+            gap:1rem;
+            margin-top:2.1rem;
         }
-        .connexa-step:last-child, .connexa-capability:last-child {margin-bottom:0;}
-        .connexa-icon {
-            min-width: 26px;
-            font-size: 1rem;
-            line-height: 1.3;
+        .connexa-stat {
+            display:flex;
+            align-items:center;
+            gap:0.85rem;
+            min-width:132px;
+            padding-right:1.4rem;
+            border-right:1px solid #E2E8F0;
+        }
+        .connexa-stat:last-child {border-right:0;}
+        .connexa-stat-icon {
+            width:46px;
+            height:46px;
+            display:grid;
+            place-items:center;
+            border-radius:16px;
+            background:#EEF3FF;
+            color:#3158F6;
+            font-size:1.4rem;
+        }
+        .connexa-stat strong {
+            display:block;
+            color:#06143A;
+            font-size:1.02rem;
+            line-height:1.15;
+        }
+        .connexa-stat span {
+            display:block;
+            color:#52617F;
+            font-size:0.88rem;
+            margin-top:0.15rem;
+        }
+        .connexa-map {
+            position:relative;
+            min-height:510px;
+            border-radius:32px;
+            background:
+                radial-gradient(circle at 52% 48%, rgba(49,88,246,.12), transparent 0 165px),
+                radial-gradient(circle at 50% 50%, transparent 0 120px, rgba(49,88,246,.09) 121px 122px, transparent 123px 205px, rgba(49,88,246,.055) 206px 207px, transparent 208px),
+                linear-gradient(180deg, #FFFFFF, #F8FBFF);
+            overflow:hidden;
+        }
+        .connexa-map:before {
+            content:"";
+            position:absolute;
+            inset:54px 48px;
+            background:
+                linear-gradient(90deg, transparent 0 49.8%, rgba(49,88,246,.26) 50%, transparent 50.2%),
+                linear-gradient(0deg, transparent 0 49.8%, rgba(49,88,246,.20) 50%, transparent 50.2%);
+            transform:rotate(12deg);
+            opacity:.65;
+        }
+        .connexa-center-node {
+            position:absolute;
+            left:50%;
+            top:50%;
+            transform:translate(-50%,-50%);
+            width:190px;
+            height:190px;
+            border-radius:999px;
+            border:2px solid #3158F6;
+            background:#fff;
+            box-shadow:0 22px 60px rgba(49,88,246,.18);
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+            justify-content:center;
+            text-align:center;
+            color:#06143A;
+        }
+        .connexa-center-node .building {font-size:2.6rem; margin-bottom:0.35rem;}
+        .connexa-center-node strong {font-size:0.98rem;}
+        .connexa-center-node span {font-size:0.86rem; margin-top:0.3rem;}
+        .connexa-node {
+            position:absolute;
+            display:flex;
+            align-items:center;
+            gap:0.7rem;
+            min-width:178px;
+            padding:0.75rem 0.9rem;
+            border:1px solid #E7ECF7;
+            border-radius:999px;
+            background:rgba(255,255,255,.92);
+            box-shadow:0 16px 42px rgba(15,23,42,.08);
+            color:#06143A;
+        }
+        .connexa-node .bubble {
+            width:42px;
+            height:42px;
+            border-radius:999px;
+            display:grid;
+            place-items:center;
+            flex:0 0 auto;
+            font-size:1.35rem;
+        }
+        .connexa-node strong {display:block; font-size:0.84rem; line-height:1.12;}
+        .connexa-node span {display:block; font-size:0.72rem; color:#52617F; margin-top:0.15rem;}
+        .node-company .bubble {background:#F0EEFF; color:#6C4DFF;}
+        .node-person .bubble {background:#DCFCE7; color:#16A34A;}
+        .node-address .bubble {background:#FFF3D7; color:#F59E0B;}
+        .node-risk .bubble {background:#FEE2E2; color:#DC2626;}
+        .n1 {left:7%; top:18%;}
+        .n2 {right:5%; top:20%;}
+        .n3 {right:8%; top:52%;}
+        .n4 {left:2%; top:49%;}
+        .n5 {left:13%; bottom:12%;}
+        .n6 {right:24%; bottom:5%;}
+        .n7 {left:44%; top:4%;}
+        .connexa-dot {
+            position:absolute;
+            width:9px;
+            height:9px;
+            border-radius:999px;
+            background:#3158F6;
+            box-shadow:0 0 0 7px rgba(49,88,246,.10);
+        }
+        .d1 {left:33%; top:37%;}
+        .d2 {right:29%; top:31%;}
+        .d3 {left:48%; bottom:22%; background:#8B5CF6;}
+        .d4 {right:17%; bottom:30%; background:#E85AAD;}
+        .connexa-source-title {
+            text-align:center;
+            color:#657391;
+            margin:1.8rem 0 1rem;
+            font-size:0.96rem;
+        }
+        .connexa-sources {
+            display:grid;
+            grid-template-columns: repeat(6, minmax(100px, 1fr));
+            gap:1rem;
+            align-items:start;
+            color:#8A96AE;
+            margin-bottom:1.6rem;
+        }
+        .connexa-source {
+            text-align:center;
+            font-weight:800;
+            font-size:1rem;
+        }
+        .connexa-source span {
+            display:block;
+            font-weight:500;
+            font-size:0.72rem;
+            margin-top:0.25rem;
+            line-height:1.3;
+        }
+        .connexa-trust {
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            gap:1rem;
+            max-width:1040px;
+            margin:1rem auto 0.5rem;
+            padding:1.15rem 1.35rem;
+            border:1px solid #E2E8F0;
+            border-radius:14px;
+            background:#fff;
+            box-shadow:0 18px 42px rgba(15,23,42,.045);
+        }
+        .connexa-trust-main {
+            display:flex;
+            align-items:center;
+            gap:1rem;
+            color:#06143A;
+        }
+        .connexa-trust-icon {
+            width:48px;
+            height:48px;
+            border-radius:14px;
+            display:grid;
+            place-items:center;
+            background:#EEF3FF;
+            color:#3158F6;
+            font-size:1.45rem;
+        }
+        .connexa-trust strong {display:block; font-size:1.15rem;}
+        .connexa-trust span {display:block; color:#52617F; font-size:0.92rem; margin-top:0.15rem;}
+        .connexa-trust-cta {
+            color:#3158F6;
+            border:1px solid #3158F6;
+            border-radius:8px;
+            padding:0.72rem 1rem;
+            font-weight:800;
+            white-space:nowrap;
+        }
+        @media (max-width: 1100px) {
+            .connexa-hero-layout {grid-template-columns:1fr;}
+            .connexa-map {min-height:470px;}
+        }
+        @media (max-width: 760px) {
+            .connexa-home {padding-top:0.35rem;}
+            .connexa-title {font-size:2.55rem;}
+            .connexa-map {min-height:620px; border-radius:22px;}
+            .connexa-node {left:50% !important; right:auto !important; min-width:230px; transform:translateX(-50%);}
+            .n1 {top:8%;}
+            .n7 {top:19%;}
+            .n2 {top:30%;}
+            .n4 {top:66%;}
+            .n3 {top:77%;}
+            .n5 {bottom:4%;}
+            .n6 {display:none;}
+            .connexa-center-node {width:155px; height:155px;}
+            .connexa-sources {grid-template-columns:repeat(2, minmax(120px, 1fr));}
+            .connexa-trust {align-items:flex-start; flex-direction:column;}
+            .connexa-trust-cta {width:100%; text-align:center;}
+            .connexa-stat {border-right:0;}
         }
         </style>
-        <div class="connexa-grid">
-          <div class="connexa-card">
-            <div class="connexa-card-title">🧭 Jak to funguje</div>
-            <div class="connexa-step"><span class="connexa-icon">1️⃣</span><span>Zadejte IČO</span></div>
-            <div class="connexa-step"><span class="connexa-icon">2️⃣</span><span>Spusťte analýzu</span></div>
-            <div class="connexa-step"><span class="connexa-icon">3️⃣</span><span>Prozkoumejte firmy, osoby a vazby</span></div>
+        <section class="connexa-home">
+          <div class="connexa-hero-layout">
+            <div>
+              <div class="connexa-eyebrow">Analýza firemních vazeb a propojení</div>
+              <h1 class="connexa-title">Odhalujeme souvislosti skryté ve <span>firemních vazbách.</span></h1>
+              <p class="connexa-lead">
+                Propojujeme firmy, osoby a adresy do přehledné mapy vztahů,
+                abyste mohli dělat informovanější rozhodnutí.
+              </p>
+              <p class="connexa-hero-hint">Zadejte IČO níže a spusťte analýzu veřejných zdrojů.</p>
+              <div class="connexa-stat-row">
+                <div class="connexa-stat"><div class="connexa-stat-icon">🏢</div><div><strong>Firmy</strong><span>z veřejných registrů</span></div></div>
+                <div class="connexa-stat"><div class="connexa-stat-icon">🔗</div><div><strong>Vazby</strong><span>osoby, firmy, adresy</span></div></div>
+                <div class="connexa-stat"><div class="connexa-stat-icon">⚠️</div><div><strong>Signály</strong><span>nutno ověřit</span></div></div>
+                <div class="connexa-stat"><div class="connexa-stat-icon">↩</div><div><strong>Historie</strong><span>aktuální i historické</span></div></div>
+              </div>
+            </div>
+            <div class="connexa-map" aria-label="Ilustrační mapa firemních vazeb">
+              <div class="connexa-dot d1"></div>
+              <div class="connexa-dot d2"></div>
+              <div class="connexa-dot d3"></div>
+              <div class="connexa-dot d4"></div>
+              <div class="connexa-center-node"><div class="building">🏢</div><strong>DEMO COMPANY s.r.o.</strong><span>IČO: zadaný subjekt</span></div>
+              <div class="connexa-node node-company n1"><div class="bubble">🏢</div><div><strong>COMPANY A s.r.o.</strong><span>Společná firma</span></div></div>
+              <div class="connexa-node node-company n2"><div class="bubble">🏢</div><div><strong>COMPANY B a.s.</strong><span>Propojená firma</span></div></div>
+              <div class="connexa-node node-person n3"><div class="bubble">👤</div><div><strong>Petr Svoboda</strong><span>Společník</span></div></div>
+              <div class="connexa-node node-address n4"><div class="bubble">📍</div><div><strong>Na Příkopě 123/4</strong><span>Společná adresa</span></div></div>
+              <div class="connexa-node node-person n5"><div class="bubble">👤</div><div><strong>Jiří Veselý</strong><span>Jednatel</span></div></div>
+              <div class="connexa-node node-company n6"><div class="bubble">🏢</div><div><strong>COMPANY C s.r.o.</strong><span>Navázaná firma</span></div></div>
+              <div class="connexa-node node-risk n7"><div class="bubble">⚠️</div><div><strong>Rizikový signál</strong><span>Nutno ověřit</span></div></div>
+            </div>
           </div>
-          <div class="connexa-card">
-            <div class="connexa-card-title">✨ Co aplikace umí</div>
-            <div class="connexa-capability"><span class="connexa-icon">👤</span><span>Osoby</span></div>
-            <div class="connexa-capability"><span class="connexa-icon">🏢</span><span>Firmy</span></div>
-            <div class="connexa-capability"><span class="connexa-icon">🕸</span><span>Vazby</span></div>
-            <div class="connexa-capability"><span class="connexa-icon">📍</span><span>Adresy</span></div>
-            <div class="connexa-capability"><span class="connexa-icon">⚠️</span><span>Rizikové signály</span></div>
+
+          <div class="connexa-source-title">Pracujeme s veřejnými zdroji dat</div>
+          <div class="connexa-sources">
+            <div class="connexa-source">ARES<span>Administrativní registr ekonomických subjektů</span></div>
+            <div class="connexa-source">OR<span>Obchodní rejstřík</span></div>
+            <div class="connexa-source">RŽP<span>Registr živnostenského podnikání</span></div>
+            <div class="connexa-source">ADIS<span>Registr DPH</span></div>
+            <div class="connexa-source">Justice.cz<span>Veřejný rejstřík a ISIR</span></div>
+            <div class="connexa-source">a další<span>veřejné zdroje</span></div>
           </div>
-        </div>
+
+          <div class="connexa-trust">
+            <div class="connexa-trust-main">
+              <div class="connexa-trust-icon">🛡</div>
+              <div><strong>Důvěřujte, ale prověřujte.</strong><span>Connexa ukáže vazby a zdroje. Závěry vždy ověřujte v původním registru.</span></div>
+            </div>
+            <div class="connexa-trust-cta">Zjistit více o funkcích →</div>
+          </div>
+        </section>
         """,
         unsafe_allow_html=True,
     )

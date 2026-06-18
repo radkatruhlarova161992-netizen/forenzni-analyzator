@@ -45,20 +45,77 @@ def render_header() -> None:
     st.markdown(
         """
         <style>
-        .connexa-hero {padding: 0.25rem 0 0.5rem 0;}
-        .connexa-kicker {font-size: 2rem; font-weight: 700; color: #1E3A5F; line-height: 1.1; margin: 0;}
-        .connexa-subtitle {font-size: 1rem; font-weight: 600; color: #2563EB; margin: 0.15rem 0 0.35rem 0;}
-        .connexa-copy {font-size: 1rem; color: #334155; margin: 0;}
+        .connexa-topbar {
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap: 1rem;
+            padding: 0.25rem 0 1.15rem 0;
+        }
+        .connexa-brand {
+            display:flex;
+            align-items:center;
+            gap:0.65rem;
+            color:#06143A;
+            font-size:1.55rem;
+            font-weight:800;
+            letter-spacing:0;
+        }
+        .connexa-logo-mark {
+            width:34px;
+            height:34px;
+            border-radius:999px;
+            background: conic-gradient(from 25deg, #2563EB 0 18%, transparent 18% 28%, #5B7CFA 28% 46%, transparent 46% 58%, #1E3A5F 58% 74%, transparent 74% 84%, #2563EB 84% 100%);
+            box-shadow: inset 0 0 0 8px #fff, 0 0 0 1px rgba(37,99,235,.18);
+        }
+        .connexa-nav {
+            display:flex;
+            align-items:center;
+            gap:1.75rem;
+            color:#06143A;
+            font-size:0.92rem;
+            font-weight:700;
+            white-space:nowrap;
+        }
+        .connexa-actions {
+            display:flex;
+            align-items:center;
+            gap:0.8rem;
+            color:#06143A;
+            font-size:0.92rem;
+            font-weight:700;
+            white-space:nowrap;
+        }
+        .connexa-demo-button {
+            display:inline-flex;
+            align-items:center;
+            padding:0.72rem 1rem;
+            border-radius:8px;
+            background:#3158F6;
+            color:#fff;
+            box-shadow:0 10px 24px rgba(49,88,246,.22);
+        }
+        @media (max-width: 920px) {
+            .connexa-nav {display:none;}
+        }
         @media (max-width: 640px) {
-          .connexa-kicker {font-size: 1.65rem;}
-          .connexa-subtitle {font-size: 0.95rem;}
-          .connexa-copy {font-size: 0.95rem;}
+            .connexa-topbar {align-items:flex-start; padding-bottom:0.7rem;}
+            .connexa-brand {font-size:1.35rem;}
+            .connexa-actions {display:none;}
         }
         </style>
-        <div class="connexa-hero">
-          <div class="connexa-kicker">🔗 Connexa</div>
-          <div class="connexa-subtitle">Analýza firemních vazeb a propojení</div>
-          <div class="connexa-copy">Objevte vazby mezi firmami, osobami a adresami během několika sekund.</div>
+        <div class="connexa-topbar">
+          <div class="connexa-brand"><span class="connexa-logo-mark"></span><span>Connexa</span></div>
+          <div class="connexa-nav">
+            <span>Jak to funguje</span>
+            <span>Funkce</span>
+            <span>Zdroje</span>
+            <span>Rizika</span>
+          </div>
+          <div class="connexa-actions">
+            <span>Analýza vazeb</span>
+            <span class="connexa-demo-button">Vyzkoušet zdarma</span>
+          </div>
         </div>
         """,
         unsafe_allow_html=True,
@@ -145,9 +202,9 @@ def render_sources_info() -> None:
 
 def render_input_controls() -> tuple[str, bool, int, bool, bool]:
     input_text = st.text_area(
-        "Zadejte IČO (oddělené čárkou nebo novým řádkem)",
-        height=120,
-        placeholder="12345678\n87654321",
+        "IČO k analýze",
+        height=96,
+        placeholder="Vložte IČO, více hodnot oddělte čárkou nebo novým řádkem",
         key="input_text",
     )
 
@@ -185,7 +242,7 @@ def render_input_controls() -> tuple[str, bool, int, bool, bool]:
 
     col1, _ = st.columns([1, 4])
     with col1:
-        run_analysis = st.button("🚀 Spustit analýzu", type="primary", use_container_width=True)
+        run_analysis = st.button("Analyzovat →", type="primary", use_container_width=True)
 
     return (
         input_text,
