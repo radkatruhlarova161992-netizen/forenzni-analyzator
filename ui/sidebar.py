@@ -57,6 +57,13 @@ def render_header() -> None:
     st.markdown(
         """
         <style>
+        .connexa-topbar {
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:1rem;
+            padding:0.15rem 0 1.05rem 0;
+        }
         .connexa-brand {
             display:flex;
             align-items:center;
@@ -65,20 +72,78 @@ def render_header() -> None:
             font-size:1.55rem;
             font-weight:800;
             letter-spacing:0;
-            padding: 0.25rem 0 1rem 0;
         }
         .connexa-logo-mark {
             width:34px;
             height:34px;
-            border-radius:999px;
-            background: conic-gradient(from 25deg, #2563EB 0 18%, transparent 18% 28%, #5B7CFA 28% 46%, transparent 46% 58%, #1E3A5F 58% 74%, transparent 74% 84%, #2563EB 84% 100%);
-            box-shadow: inset 0 0 0 8px #fff, 0 0 0 1px rgba(37,99,235,.18);
+            display:grid;
+            place-items:center;
+            color:#2F5BFF;
+            position:relative;
+        }
+        .connexa-logo-mark:before,
+        .connexa-logo-mark:after {
+            content:"";
+            position:absolute;
+            inset:0;
+        }
+        .connexa-logo-mark:before {
+            width:16px;
+            height:16px;
+            border:2px solid #2F5BFF;
+            transform:rotate(45deg);
+            top:9px;
+            left:9px;
+            border-radius:4px;
+            background:#fff;
+        }
+        .connexa-logo-mark:after {
+            background:
+              radial-gradient(circle, #2F5BFF 0 4px, transparent 4.5px) 50% 0/10px 10px no-repeat,
+              radial-gradient(circle, #2F5BFF 0 4px, transparent 4.5px) 100% 50%/10px 10px no-repeat,
+              radial-gradient(circle, #2F5BFF 0 4px, transparent 4.5px) 50% 100%/10px 10px no-repeat,
+              radial-gradient(circle, #2F5BFF 0 4px, transparent 4.5px) 0 50%/10px 10px no-repeat;
+        }
+        .connexa-nav {
+            display:flex;
+            align-items:center;
+            gap:3rem;
+            color:#06143A;
+            font-size:0.92rem;
+            font-weight:700;
+            white-space:nowrap;
+        }
+        .connexa-login {
+            display:flex;
+            align-items:center;
+            gap:0.6rem;
+            color:#06143A;
+            font-size:0.95rem;
+            font-weight:700;
+            white-space:nowrap;
+        }
+        .connexa-login-icon {
+            font-size:1.1rem;
         }
         @media (max-width: 640px) {
             .connexa-brand {font-size:1.35rem;}
+            .connexa-nav {display:none;}
+        }
+        @media (max-width: 900px) {
+            .connexa-nav {gap:1.5rem; font-size:0.88rem;}
         }
         </style>
-        <div class="connexa-brand"><span class="connexa-logo-mark"></span><span>Connexa</span></div>
+        <div class="connexa-topbar">
+          <div class="connexa-brand"><span class="connexa-logo-mark"></span><span>Connexa</span></div>
+          <div class="connexa-nav">
+            <span>Jak to funguje</span>
+            <span>Funkce</span>
+            <span>Ceník</span>
+            <span>O nás</span>
+            <span>Blog</span>
+          </div>
+          <div class="connexa-login"><span class="connexa-login-icon">◔</span><span>Přihlásit se</span></div>
+        </div>
         """,
         unsafe_allow_html=True,
     )
@@ -162,48 +227,96 @@ def render_sources_info() -> None:
         )
 
 
-def render_input_controls() -> tuple[str, bool, int, bool, bool, bool]:
-    input_text = st.text_area(
-        "IČO k analýze",
-        height=96,
-        placeholder="Vložte IČO, více hodnot oddělte čárkou nebo novým řádkem",
-        key="input_text",
-    )
+def render_input_controls(
+    *,
+    homepage_mode: bool = False,
+) -> tuple[str, bool, int, bool, bool, bool]:
+    if homepage_mode:
+        search_col, action_col = st.columns([3.9, 1.7], gap="small")
+        with search_col:
+            input_text = st.text_area(
+                "Zadejte IČO, název firmy nebo jméno osoby",
+                height=74,
+                placeholder="Zadejte IČO, název firmy nebo jméno osoby",
+                key="input_text",
+                label_visibility="collapsed",
+            )
+        with action_col:
+            st.markdown("<div style='height:2px'></div>", unsafe_allow_html=True)
+            run_analysis = st.button("Analyzovat →", type="primary", use_container_width=True)
 
-    relationship_scope = st.radio(
-        "Zobrazit vazby",
-        options=["Jen aktuální", "Aktuální i historické"],
-        horizontal=True,
-        key="relationship_scope",
-        help=(
-            "Aktuální vazby ukazují dnes platná propojení. "
-            "Historické vazby přidají i dřívější role a spojení z načtených veřejných dat."
-        ),
-    )
-    include_historical = relationship_scope == "Aktuální i historické"
-    expansion_depth = st.selectbox(
-        "Rozsah analýzy",
-        options=[1, 2, 3],
-        format_func=lambda value: EXPANSION_DEPTH_LABELS[value],
-        key="expansion_depth",
-        help=(
-            "Vyberte, jak daleko má Connexa pokračovat při dohledávání dalších firem a vazeb."
-        ),
-    )
-    st.caption(
-        f"**{EXPANSION_DEPTH_LABELS[expansion_depth]}**: "
-        f"{EXPANSION_DEPTH_DESCRIPTIONS[expansion_depth]}"
-    )
-    auto_include_all_entities_initial = st.checkbox(
-        "Pro vazby osob a firem vyber všechny osoby i firmy spojené s firmou",
-        key="auto_include_all_entities_initial",
-    )
+        with st.expander("Upřesnit analýzu", expanded=False):
+            relationship_scope = st.radio(
+                "Zobrazit vazby",
+                options=["Jen aktuální", "Aktuální i historické"],
+                horizontal=True,
+                key="relationship_scope",
+                help=(
+                    "Aktuální vazby ukazují dnes platná propojení. "
+                    "Historické vazby přidají i dřívější role a spojení z načtených veřejných dat."
+                ),
+            )
+            include_historical = relationship_scope == "Aktuální i historické"
+            expansion_depth = st.selectbox(
+                "Rozsah analýzy",
+                options=[1, 2, 3],
+                format_func=lambda value: EXPANSION_DEPTH_LABELS[value],
+                key="expansion_depth",
+                help=(
+                    "Vyberte, jak daleko má Connexa pokračovat při dohledávání dalších firem a vazeb."
+                ),
+            )
+            st.caption(
+                f"**{EXPANSION_DEPTH_LABELS[expansion_depth]}**: "
+                f"{EXPANSION_DEPTH_DESCRIPTIONS[expansion_depth]}"
+            )
+            auto_include_all_entities_initial = st.checkbox(
+                "Pro vazby osob a firem vyber všechny osoby i firmy spojené s firmou",
+                key="auto_include_all_entities_initial",
+            )
+            refresh_data = st.button("Aktualizovat data", use_container_width=True)
+    else:
+        input_text = st.text_area(
+            "IČO k analýze",
+            height=96,
+            placeholder="Vložte IČO, více hodnot oddělte čárkou nebo novým řádkem",
+            key="input_text",
+        )
 
-    col1, col2, _ = st.columns([1, 1, 3])
-    with col1:
-        run_analysis = st.button("Spustit analýzu", type="primary", use_container_width=True)
-    with col2:
-        refresh_data = st.button("Aktualizovat data", use_container_width=True)
+        relationship_scope = st.radio(
+            "Zobrazit vazby",
+            options=["Jen aktuální", "Aktuální i historické"],
+            horizontal=True,
+            key="relationship_scope",
+            help=(
+                "Aktuální vazby ukazují dnes platná propojení. "
+                "Historické vazby přidají i dřívější role a spojení z načtených veřejných dat."
+            ),
+        )
+        include_historical = relationship_scope == "Aktuální i historické"
+        expansion_depth = st.selectbox(
+            "Rozsah analýzy",
+            options=[1, 2, 3],
+            format_func=lambda value: EXPANSION_DEPTH_LABELS[value],
+            key="expansion_depth",
+            help=(
+                "Vyberte, jak daleko má Connexa pokračovat při dohledávání dalších firem a vazeb."
+            ),
+        )
+        st.caption(
+            f"**{EXPANSION_DEPTH_LABELS[expansion_depth]}**: "
+            f"{EXPANSION_DEPTH_DESCRIPTIONS[expansion_depth]}"
+        )
+        auto_include_all_entities_initial = st.checkbox(
+            "Pro vazby osob a firem vyber všechny osoby i firmy spojené s firmou",
+            key="auto_include_all_entities_initial",
+        )
+
+        col1, col2, _ = st.columns([1, 1, 3])
+        with col1:
+            run_analysis = st.button("Spustit analýzu", type="primary", use_container_width=True)
+        with col2:
+            refresh_data = st.button("Aktualizovat data", use_container_width=True)
 
     return (
         input_text,

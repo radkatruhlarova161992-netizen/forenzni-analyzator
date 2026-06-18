@@ -12,8 +12,8 @@ st.set_page_config(page_title=APP_TITLE, page_icon=APP_ICON, layout=APP_LAYOUT)
 
 
 def main() -> None:
-    render_header()
     initialize_session_state({})
+    render_header()
 
     results = st.session_state.get("results", [])
     current_screen = render_app_navigation(results)
