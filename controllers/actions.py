@@ -10,6 +10,38 @@ from controllers.pipeline import analyze_icos
 from core.utils import parse_ico_list, parse_person_list
 
 
+def reset_current_case() -> None:
+    reset_values: dict[str, Any] = {
+        "results": [],
+        "input_text": "",
+        "selected_relationship_people_names": [],
+        "selected_relationship_people_rows": [],
+        "relationship_include_all_entities": False,
+        "cross_analysis_people": [],
+        "cross_analysis_enabled": False,
+        "cross_people_text": "",
+        "cross_ico_text": "",
+        "extra_relationship_ico_text": "",
+        "pending_select_all_entities": False,
+        "last_analysis_summary": None,
+        "current_screen": "📊 Přehled",
+        "compare_all_entities_global": False,
+        "graph_selected_node_id": None,
+        "confirm_reset_case": False,
+        "request_reset_case": False,
+    }
+    for key, value in reset_values.items():
+        st.session_state[key] = value
+
+    stale_keys = [
+        key
+        for key in st.session_state.keys()
+        if key.startswith("select_person_") or key.startswith("select_all_people_")
+    ]
+    for key in stale_keys:
+        del st.session_state[key]
+
+
 def mark_all_people_checkboxes(
     records: list[dict[str, Any]],
     checked: bool = True,

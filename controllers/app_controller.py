@@ -6,6 +6,7 @@ from controllers.actions import (
     apply_pending_select_all_entities,
     handle_initial_analysis,
     handle_ui_actions,
+    reset_current_case,
 )
 from controllers.payloads import build_ui_payloads
 from core.state import save_persisted_state
@@ -90,6 +91,11 @@ def run_app_controller(current_screen: str) -> None:
         payloads["cross_analysis_payload"],
         payloads["selected_people_payload"],
     )
+
+    if st.session_state.get("request_reset_case"):
+        reset_current_case()
+        persist_state()
+        st.rerun()
 
     if actions["run_analysis"]:
         handle_initial_analysis(

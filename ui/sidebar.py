@@ -30,6 +30,8 @@ DEFAULT_SESSION_STATE: dict[str, Any] = {
     "graph_show_addresses": True,
     "graph_show_historical": True,
     "graph_show_risks": True,
+    "confirm_reset_case": False,
+    "request_reset_case": False,
 }
 
 
@@ -88,6 +90,8 @@ def render_app_navigation(results: list[dict[str, Any]]) -> str:
         else:
             st.caption("Připraveno k nové analýze")
 
+        render_new_case_action("sidebar")
+
         if results:
             st.markdown("### Subjekty")
             for record in results[:5]:
@@ -96,6 +100,34 @@ def render_app_navigation(results: list[dict[str, Any]]) -> str:
                 st.caption(f"+ další {len(results) - 5}")
 
     return current_screen
+
+
+def render_new_case_action(section_key: str) -> None:
+    if st.button("🧹 Nový případ", key=f"new_case_button_{section_key}", use_container_width=True):
+        st.session_state["confirm_reset_case"] = True
+
+    if not st.session_state.get("confirm_reset_case"):
+        return
+
+    st.warning("Opravdu chcete smazat aktuální analýzu a začít nový případ?")
+    col1, col2 = st.columns(2)
+    with col1:
+        if st.button(
+            "Ano, smazat",
+            key=f"confirm_reset_case_{section_key}",
+            use_container_width=True,
+            type="primary",
+        ):
+            st.session_state["request_reset_case"] = True
+            st.session_state["confirm_reset_case"] = False
+    with col2:
+        if st.button(
+            "Zrušit",
+            key=f"cancel_reset_case_{section_key}",
+            use_container_width=True,
+        ):
+            st.session_state["confirm_reset_case"] = False
+            st.rerun()
 
 
 def render_sources_info() -> None:

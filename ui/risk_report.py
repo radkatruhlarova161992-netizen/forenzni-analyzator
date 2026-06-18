@@ -12,7 +12,7 @@ from ui.explainers import (
     render_next_steps_section,
     render_term_tooltips,
 )
-from ui.sidebar import render_input_controls, render_sources_info
+from ui.sidebar import render_input_controls, render_new_case_action, render_sources_info
 
 
 def render_case_screen(results: list[dict[str, Any]], relationship_scope: str) -> dict[str, Any]:
@@ -23,6 +23,7 @@ def render_case_screen(results: list[dict[str, Any]], relationship_scope: str) -
         "expansion_depth": st.session_state.get("expansion_depth", 1),
         "auto_include_all_entities_initial": st.session_state.get("auto_include_all_entities_initial", False),
         "run_analysis": False,
+        "reset_case": False,
     }
 
     if results:
@@ -58,6 +59,7 @@ def render_case_screen(results: list[dict[str, Any]], relationship_scope: str) -
             with st.container(border=True):
                 st.markdown("### Nová analýza")
                 st.caption("Vlož IČA a spusť analýzu.")
+                render_new_case_action("overview_existing")
                 (
                     actions["input_text"],
                     actions["include_historical"],
@@ -70,6 +72,7 @@ def render_case_screen(results: list[dict[str, Any]], relationship_scope: str) -
         with st.container(border=True):
             st.markdown("### Nová analýza")
             st.caption("Vlož IČA a spusť analýzu.")
+            render_new_case_action("overview_empty")
             (
                 actions["input_text"],
                 actions["include_historical"],
