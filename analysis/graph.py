@@ -57,6 +57,11 @@ def find_company_links(records: list[dict[str, Any]]) -> pd.DataFrame:
                     "Stav vazby": company.get("stav_vazby"),
                     "Od": company.get("od"),
                     "Do": company.get("do"),
+                    "Zdroj": company.get("source_name") or company.get("zdroj_cast"),
+                    "Důvěryhodnost": company.get("confidence"),
+                    "Ověření": company.get("verification_label")
+                    or company.get("verification_status"),
+                    "Odkaz": company.get("source_url") or company.get("kurzy_vazby_link"),
                 }
             )
 
@@ -71,6 +76,10 @@ def find_company_links(records: list[dict[str, Any]]) -> pd.DataFrame:
                 "Stav vazby",
                 "Od",
                 "Do",
+                "Zdroj",
+                "Důvěryhodnost",
+                "Ověření",
+                "Odkaz",
             ]
         )
 
@@ -133,12 +142,32 @@ def build_participant_edges(records: list[dict[str, Any]]) -> pd.DataFrame:
                         "Stav vazby": linked_company.get("stav_vazby"),
                         "Od": linked_company.get("od"),
                         "Do": linked_company.get("do"),
+                        "Zdroj": linked_company.get("source_name")
+                        or linked_company.get("zdroj_cast"),
+                        "Důvěryhodnost": linked_company.get("confidence"),
+                        "Ověření": linked_company.get("verification_label")
+                        or linked_company.get("verification_status"),
+                        "Odkaz": linked_company.get("source_url")
+                        or linked_company.get("kurzy_vazby_link"),
                     }
                 )
 
     if not rows:
         return pd.DataFrame(
-            columns=["Firma", "IČO", "Účastník", "Typ účastníka", "Role", "Stav vazby", "Od", "Do"]
+            columns=[
+                "Firma",
+                "IČO",
+                "Účastník",
+                "Typ účastníka",
+                "Role",
+                "Stav vazby",
+                "Od",
+                "Do",
+                "Zdroj",
+                "Důvěryhodnost",
+                "Ověření",
+                "Odkaz",
+            ]
         )
 
     return pd.DataFrame(rows)
@@ -599,7 +628,13 @@ def build_visual_relationship_dataset(records: list[dict[str, Any]]) -> dict[str
             if not linked_name:
                 continue
 
-            linked_id = f"company:{linked_ico}"
+            verification_status = linked_company.get("verification_status")
+            unverified_external = verification_status in {
+                "unverified_external",
+                "candidate_match",
+            }
+            node_type = "candidate_company" if unverified_external and not linked_company.get("ico") else "company"
+            linked_id = f"{node_type}:{linked_ico}"
             relationship_state = linked_company.get("stav_vazby") or (
                 "Historická" if linked_company.get("do") else "Aktuální"
             )
@@ -608,13 +643,18 @@ def build_visual_relationship_dataset(records: list[dict[str, Any]]) -> dict[str
 
             add_node(
                 linked_id,
-                "company",
+                node_type,
                 linked_name,
                 ico=linked_company.get("ico"),
                 name=linked_name,
-                address=None,
+                address=linked_company.get("adresa"),
                 risk_level=None,
                 company_count=1,
+                source_name=linked_company.get("source_name"),
+                source_url=linked_company.get("source_url"),
+                confidence=linked_company.get("confidence"),
+                verification_status=verification_status,
+                verification_label=linked_company.get("verification_label"),
             )
             add_edge(
                 company_id,
@@ -622,10 +662,15 @@ def build_visual_relationship_dataset(records: list[dict[str, Any]]) -> dict[str
                 edge_type,
                 edge_type,
                 historical=edge_type == "historická vazba",
+                unverified_external=unverified_external,
                 role=role_name,
                 relationship_state=relationship_state,
                 date_from=linked_company.get("od"),
                 date_to=linked_company.get("do"),
+                source_name=linked_company.get("source_name"),
+                source_url=linked_company.get("source_url"),
+                confidence=linked_company.get("confidence"),
+                verification_status=verification_status,
             )
 
         for index, flag in enumerate(record.get("risk_flags", []) or [], start=1):
@@ -678,7 +723,9 @@ def build_visual_relationship_dataset(records: list[dict[str, Any]]) -> dict[str
             meta["relationship_states"] = sorted(set(meta["relationship_states"]))
 
     stats = {
-        "companies": sum(1 for node in nodes.values() if node["type"] == "company"),
+        "companies": sum(
+            1 for node in nodes.values() if node["type"] in {"company", "candidate_company"}
+        ),
         "people": sum(1 for node in nodes.values() if node["type"] == "person"),
         "addresses": sum(1 for node in nodes.values() if node["type"] == "address"),
         "risks": sum(1 for node in nodes.values() if node["type"] == "risk"),
@@ -696,6 +743,7 @@ def filter_visual_relationship_dataset(
     show_addresses: bool,
     show_historical: bool,
     show_risks: bool,
+    show_external: bool = True,
     max_companies: int = 140,
     max_people: int = 320,
     max_nodes: int = 900,
@@ -703,6 +751,7 @@ def filter_visual_relationship_dataset(
     allowed_types: set[str] = set()
     if show_companies:
         allowed_types.add("company")
+        allowed_types.add("candidate_company")
     if show_people:
         allowed_types.add("person")
     if show_addresses:
@@ -723,6 +772,7 @@ def filter_visual_relationship_dataset(
         and edge["target"] in base_nodes
         and (show_historical or not edge.get("historical"))
         and (show_risks or edge["type"] != "rizikový signál")
+        and (show_external or not edge.get("meta", {}).get("unverified_external"))
     ]
 
     connected_node_ids = {edge["source"] for edge in filtered_edges} | {
@@ -743,7 +793,14 @@ def filter_visual_relationship_dataset(
 
     hidden_nodes: dict[str, dict[str, Any]] = {}
     for node_type, limit in (("company", max_companies), ("person", max_people)):
-        type_nodes = [node for node in nodes.values() if node["type"] == node_type]
+        if node_type == "company":
+            type_nodes = [
+                node
+                for node in nodes.values()
+                if node["type"] in {"company", "candidate_company"}
+            ]
+        else:
+            type_nodes = [node for node in nodes.values() if node["type"] == node_type]
         if len(type_nodes) <= limit:
             continue
         ranked = sorted(
@@ -797,7 +854,7 @@ def filter_visual_relationship_dataset(
         hidden = hidden_nodes.get(node_id)
         if not hidden:
             return None
-        group_type = hidden["type"]
+        group_type = "company" if hidden["type"] == "candidate_company" else hidden["type"]
         spec = aggregate_specs.get(group_type)
         if not spec:
             return None
@@ -839,7 +896,9 @@ def filter_visual_relationship_dataset(
     final_edges = list(aggregate_edges.values())
 
     final_stats = {
-        "companies": sum(1 for node in final_nodes if node["type"] == "company"),
+        "companies": sum(
+            1 for node in final_nodes if node["type"] in {"company", "candidate_company"}
+        ),
         "people": sum(1 for node in final_nodes if node["type"] == "person"),
         "addresses": sum(1 for node in final_nodes if node["type"] == "address"),
         "risks": sum(1 for node in final_nodes if node["type"] == "risk"),
@@ -852,7 +911,9 @@ def filter_visual_relationship_dataset(
         "stats": final_stats,
         "aggregated": {
             "companies_hidden": sum(
-                1 for node in hidden_nodes.values() if node["type"] == "company"
+                1
+                for node in hidden_nodes.values()
+                if node["type"] in {"company", "candidate_company"}
             ),
             "people_hidden": sum(
                 1 for node in hidden_nodes.values() if node["type"] == "person"

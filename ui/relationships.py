@@ -30,6 +30,12 @@ def render_relationships_screen(
     st.subheader("Vazby")
     render_key_findings_intro(results)
     st.caption("Tady rychle uvidíš, proč spolu firmy souvisejí.")
+    show_external_relationships = st.checkbox(
+        "Zahrnout rozšířené externí vazby",
+        value=st.session_state.get("relationships_show_external", True),
+        key="relationships_show_external",
+        help="Zobrazí i vazby z veřejných agregátorů. Tyto vazby jsou označené jako nutno ověřit.",
+    )
     with st.expander("Co to znamená?", expanded=True):
         render_meaning_section()
     with st.expander("Doporučené další kroky", expanded=True):
@@ -39,11 +45,19 @@ def render_relationships_screen(
 
     shared_people = build_shared_people_view(relationship_graph["person_occurrences"])
     shared_addresses = build_shared_addresses_view(results)
-    historical_relationships = build_historical_relationships_view(
-        relationship_graph["participant_edges"]
+    company_links = filter_external_rows(
+        relationship_graph["company_links"],
+        show_external_relationships,
     )
-    legal_entity_links = build_legal_entity_link_view(relationship_graph["company_links"])
-    text_map = build_text_relationship_map(results)
+    participant_edges = filter_external_rows(
+        relationship_graph["participant_edges"],
+        show_external_relationships,
+    )
+    historical_relationships = build_historical_relationships_view(
+        participant_edges
+    )
+    legal_entity_links = build_legal_entity_link_view(company_links)
+    text_map = build_text_relationship_map(results, show_external_relationships)
 
     summary_col1, summary_col2, summary_col3, summary_col4 = st.columns(4)
     with summary_col1:
@@ -77,6 +91,7 @@ def render_relationships_screen(
         NO_DIRECT_INTERSECTION_TEXT,
         use_html=True,
     )
+    render_source_diagnostics(results)
 
     st.markdown("### Textová mapa vazeb")
     if not text_map.strip():
@@ -88,7 +103,7 @@ def render_relationships_screen(
     key_nodes = build_key_nodes(
         shared_people,
         shared_addresses,
-        relationship_graph["participant_edges"],
+        participant_edges,
     )
     people_col, address_col, company_col = st.columns(3)
     with people_col:
@@ -242,6 +257,12 @@ def build_shared_addresses_view(results: list[dict[str, Any]]) -> pd.DataFrame:
     return shared.sort_values(["Počet firem", "Adresa"], ascending=[False, True])
 
 
+def filter_external_rows(dataframe: pd.DataFrame, show_external: bool) -> pd.DataFrame:
+    if show_external or dataframe.empty or "Ověření" not in dataframe.columns:
+        return dataframe
+    return dataframe[dataframe["Ověření"] != "nutno ověřit"]
+
+
 def build_historical_relationships_view(participant_edges: pd.DataFrame) -> pd.DataFrame:
     if participant_edges.empty:
         return pd.DataFrame(columns=["Osoba", "Firma", "Role", "Od", "Do"])
@@ -280,7 +301,16 @@ def build_historical_relationships_view(participant_edges: pd.DataFrame) -> pd.D
 def build_legal_entity_link_view(company_links: pd.DataFrame) -> pd.DataFrame:
     if company_links.empty:
         return pd.DataFrame(
-            columns=["Zdrojová firma", "Propojující firma", "Cílová firma", "Typ vazby"]
+            columns=[
+                "Zdrojová firma",
+                "Propojující firma",
+                "Cílová firma",
+                "Typ vazby",
+                "Zdroj",
+                "Důvěryhodnost",
+                "Ověření",
+                "Odkaz",
+            ]
         )
 
     grouped: dict[str, list[dict[str, Any]]] = {}
@@ -324,12 +354,55 @@ def build_legal_entity_link_view(company_links: pd.DataFrame) -> pd.DataFrame:
                     "Propojující firma": connector_label,
                     "Cílová firma": right_company,
                     "Typ vazby": ", ".join(type_parts) if type_parts else "nutno ověřit",
+                    "Zdroj": ", ".join(
+                        sorted(
+                            {
+                                str(value)
+                                for value in [left.get("Zdroj"), right.get("Zdroj")]
+                                if value
+                            }
+                        )
+                    )
+                    or "neuvedeno",
+                    "Důvěryhodnost": ", ".join(
+                        sorted(
+                            {
+                                str(value)
+                                for value in [
+                                    left.get("Důvěryhodnost"),
+                                    right.get("Důvěryhodnost"),
+                                ]
+                                if value
+                            }
+                        )
+                    )
+                    or "neuvedeno",
+                    "Ověření": ", ".join(
+                        sorted(
+                            {
+                                str(value)
+                                for value in [left.get("Ověření"), right.get("Ověření")]
+                                if value
+                            }
+                        )
+                    )
+                    or "nutno ověřit",
+                    "Odkaz": left.get("Odkaz") or right.get("Odkaz") or "",
                 }
             )
 
     if not rows:
         return pd.DataFrame(
-            columns=["Zdrojová firma", "Propojující firma", "Cílová firma", "Typ vazby"]
+            columns=[
+                "Zdrojová firma",
+                "Propojující firma",
+                "Cílová firma",
+                "Typ vazby",
+                "Zdroj",
+                "Důvěryhodnost",
+                "Ověření",
+                "Odkaz",
+            ]
         )
 
     return (
@@ -343,7 +416,10 @@ def build_legal_entity_link_view(company_links: pd.DataFrame) -> pd.DataFrame:
     )
 
 
-def build_text_relationship_map(results: list[dict[str, Any]]) -> str:
+def build_text_relationship_map(
+    results: list[dict[str, Any]],
+    show_external: bool = True,
+) -> str:
     blocks: list[str] = []
     for record in results:
         company_name = record.get("nazev") or "(neznámý název)"
@@ -364,6 +440,11 @@ def build_text_relationship_map(results: list[dict[str, Any]]) -> str:
 
         linked_companies = record.get("navazane_firmy", []) or []
         for linked in linked_companies[:5]:
+            if (
+                not show_external
+                and linked.get("verification_status") == "unverified_external"
+            ):
+                continue
             linked_name = linked.get("firma")
             if not linked_name:
                 continue
@@ -466,6 +547,36 @@ def render_small_table(dataframe: pd.DataFrame, empty_text: str) -> None:
         use_container_width=True,
         height=min(420, 60 + 35 * len(dataframe)),
     )
+
+
+def render_source_diagnostics(results: list[dict[str, Any]]) -> None:
+    with st.expander("Diagnostika zdrojů", expanded=False):
+        rows: list[dict[str, Any]] = []
+        for record in results:
+            diagnostics = record.get("source_diagnostics") or {}
+            counts = diagnostics.get("counts") or {}
+            relationship_diagnostics = record.get("relationship_diagnostics") or {}
+            rows.append(
+                {
+                    "IČO": record.get("ico"),
+                    "ARES": relationship_diagnostics.get("ares", 0),
+                    "Justice": relationship_diagnostics.get("justice", 0),
+                    "Kurzy": relationship_diagnostics.get("kurzy", 0),
+                    "Sloučeno": relationship_diagnostics.get("merged", 0),
+                    "Vynecháno": relationship_diagnostics.get("skipped", 0),
+                    "Ověřené vazby": counts.get("verified_relationships", 0),
+                    "Externí vazby": counts.get("unverified_external_relationships", 0),
+                    "Bez IČO": counts.get("pending_ico_relationships", 0),
+                    "Chyby zdrojů": counts.get("source_errors", 0),
+                }
+            )
+            for warning in diagnostics.get("parser_warnings") or []:
+                st.warning(f"{record.get('ico')}: {warning}")
+
+        if rows:
+            st.dataframe(pd.DataFrame(rows), use_container_width=True)
+        else:
+            st.info("Diagnostika zdrojů není k dispozici.")
 
 
 def render_cross_analysis_inputs() -> tuple[bool, str, str]:

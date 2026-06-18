@@ -4,6 +4,7 @@ from typing import Any
 
 from core.database import load_cached_source_data, save_cached_source_data
 from core.utils import now_str
+from analysis.source_diagnostics import build_external_gap_warning, build_source_diagnostics
 from models.company import Company
 from models.person import Person
 from sources.adis import fetch_dph_status
@@ -150,6 +151,8 @@ def _merge_relationships(
             or relationship.get("kurzy_vazby_link"),
             "confidence": relationship.get("confidence") or "high",
             "verification_status": relationship.get("verification_status")
+            or "verified_primary",
+            "verification_label": relationship.get("verification_label")
             or "ověřeno primárním zdrojem",
         }
         signature = _relationship_signature(normalized)
@@ -167,7 +170,8 @@ def _merge_relationships(
             or relationship.get("kurzy_vazby_link"),
             "confidence": relationship.get("confidence") or "medium",
             "verification_status": relationship.get("verification_status")
-            or "nutno ověřit",
+            or "unverified_external",
+            "verification_label": relationship.get("verification_label") or "nutno ověřit",
         }
         signature = _relationship_signature(normalized)
         if signature in seen:
@@ -207,29 +211,29 @@ def normalize_entities(source_data: dict[str, Any]) -> dict[str, Any]:
         "merged": len(merged_relationships),
         "skipped": merged_skipped,
     }
-    record["verified_relationship_count"] = (
-        primary_diagnostics["ares"] + primary_diagnostics["justice"]
+    record["source_diagnostics"] = build_source_diagnostics(
+        record,
+        source_data=source_data,
+        merged_skipped=merged_skipped,
     )
+    diagnostics_counts = record["source_diagnostics"]["counts"]
+    record["verified_relationship_count"] = diagnostics_counts["verified_relationships"]
     record["unverified_external_relationship_count"] = len(
-        [item for item in merged_relationships if item.get("source_name") == "Kurzy.cz"]
+        [
+            item
+            for item in merged_relationships
+            if item.get("verification_status") == "unverified_external"
+        ]
     )
     record["pending_ico_relationship_count"] = len(
         [
             item
             for item in merged_relationships
-            if item.get("source_name") == "Kurzy.cz" and not item.get("ico")
+            if item.get("verification_status") == "unverified_external"
+            and not item.get("ico")
         ]
     )
-    if (
-        len(kurzy_relationships) >= record["verified_relationship_count"] + 5
-        and len(kurzy_relationships) > record["verified_relationship_count"]
-    ):
-        record["external_gap_warning"] = (
-            f"Z Kurzy.cz bylo nalezeno {len(kurzy_relationships)} možných vazeb, "
-            f"ale pouze {record['verified_relationship_count']} bylo plně ověřeno přes primární zdroje."
-        )
-    else:
-        record["external_gap_warning"] = None
+    record["external_gap_warning"] = build_external_gap_warning(record)
     return record
 
 

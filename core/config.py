@@ -15,6 +15,7 @@ HEADERS = {
 
 ARES_URL = "https://ares.gov.cz/ekonomicke-subjekty-v-be/rest/ekonomicke-subjekty/{ico}"
 ARES_VR_URL = "https://ares.gov.cz/ekonomicke-subjekty-v-be/rest/ekonomicke-subjekty-vr/{ico}"
+ARES_SEARCH_URL = "https://ares.gov.cz/ekonomicke-subjekty-v-be/rest/ekonomicke-subjekty-vyhledat"
 
 ADIS_URL = "https://adisrws.mfcr.cz/adistc/axis2/services/rozhraniCRPDPH.rozhraniCRPDPHSOAP"
 ADIS_NS = "{http://adis.mfcr.cz/rozhraniCRPDPH/}"
@@ -33,5 +34,6 @@ DETAIL_COMPANY_URL = "https://www.detail.cz/firma/{ico}"
 
 APP_STATE_PATH = Path(__file__).resolve().parent.parent / "app_state.json"
 DATABASE_PATH = BASE_DIR / "connexa.db"
-CACHE_MAX_AGE_DAYS = 30
+CACHE_MAX_AGE_DAYS = 1
+CANDIDATE_CACHE_MAX_AGE_DAYS = 7
 WEEKLY_REFRESH_INTERVAL_DAYS = 7

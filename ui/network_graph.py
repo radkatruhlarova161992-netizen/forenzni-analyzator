@@ -12,6 +12,7 @@ from analysis.graph import (
 
 NODE_COLORS = {
     "company": "#2563EB",
+    "candidate_company": "#94A3B8",
     "person": "#16A34A",
     "address": "#F59E0B",
     "risk": "#DC2626",
@@ -55,6 +56,7 @@ def render_graph_screen(
         show_addresses=st.session_state.get("graph_show_addresses", True),
         show_historical=st.session_state.get("graph_show_historical", True),
         show_risks=st.session_state.get("graph_show_risks", True),
+        show_external=st.session_state.get("graph_show_external", True),
     )
 
     render_graph_stats(filtered_graph)
@@ -70,7 +72,7 @@ def render_graph_screen(
 
 def render_graph_filters() -> None:
     st.markdown("### Filtry")
-    col1, col2, col3, col4, col5 = st.columns(5)
+    col1, col2, col3, col4, col5, col6 = st.columns(6)
     with col1:
         st.checkbox("🏢 Firmy", value=True, key="graph_show_companies")
     with col2:
@@ -86,6 +88,13 @@ def render_graph_filters() -> None:
         )
     with col5:
         st.checkbox("⚠️ Rizikové signály", value=True, key="graph_show_risks")
+    with col6:
+        st.checkbox(
+            "Externí vazby",
+            value=True,
+            key="graph_show_external",
+            help="Zobrazí i vazby z veřejných agregátorů, které je nutné ověřit.",
+        )
 
 
 def render_graph_stats(graph_data: dict[str, Any]) -> None:
@@ -179,7 +188,8 @@ def render_interactive_graph(graph_data: dict[str, Any]) -> str | None:
             label=edge["label"],
             color=resolve_edge_color(edge, selected_node_id, adjacent_ids),
             width=resolve_edge_width(edge, selected_node_id, adjacent_ids),
-            dashes=edge.get("historical", False),
+            dashes=edge.get("historical", False)
+            or edge.get("meta", {}).get("unverified_external", False),
             smooth={"type": "dynamic"},
             font={"size": 11, "align": "middle"},
         )
@@ -261,7 +271,7 @@ def resolve_node_size(
     meta = node.get("meta", {})
     degree_hint = meta.get("company_count", 1)
     base_size = 18
-    if node["type"] == "company":
+    if node["type"] in {"company", "candidate_company"}:
         base_size = 26
     elif node["type"] == "person":
         base_size = 18 + min(degree_hint, 5)
@@ -316,8 +326,12 @@ def build_node_label(node: dict[str, Any]) -> str:
 
 def build_node_title(node: dict[str, Any]) -> str:
     meta = node.get("meta", {})
-    if node["type"] == "company":
-        return f"{meta.get('name')}\\nIČO: {meta.get('ico') or '—'}\\nSídlo: {meta.get('address') or '—'}"
+    if node["type"] in {"company", "candidate_company"}:
+        verification = meta.get("verification_label") or meta.get("verification_status") or "—"
+        return (
+            f"{meta.get('name')}\\nIČO: {meta.get('ico') or '—'}"
+            f"\\nSídlo: {meta.get('address') or '—'}\\nOvěření: {verification}"
+        )
     if node["type"] == "person":
         return (
             f"{meta.get('name')}\\nRole: {', '.join(meta.get('roles') or ['neuvedeno'])}"
@@ -354,11 +368,15 @@ def render_selected_node_detail(
     node_type = node["type"]
     meta = node.get("meta", {})
 
-    if node_type == "company":
+    if node_type in {"company", "candidate_company"}:
         st.markdown("**🏢 Firma**")
         st.write(meta.get("name") or "—")
         st.caption(f"IČO: {meta.get('ico') or '—'}")
         st.write(f"Sídlo: {meta.get('address') or '—'}")
+        if node_type == "candidate_company":
+            st.warning("Externí vazba bez plného ověření. Nutno ověřit ručně.")
+        if meta.get("source_url"):
+            st.markdown(f"[Ověřit zdroj]({meta.get('source_url')})")
         if meta.get("risk_level"):
             st.write(f"Riziková úroveň: {meta.get('risk_level')}")
         return

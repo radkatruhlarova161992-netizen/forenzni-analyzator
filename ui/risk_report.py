@@ -6,6 +6,7 @@ from typing import Any
 import pandas as pd
 import streamlit as st
 
+from analysis.source_diagnostics import summarize_case_diagnostics
 from ui.explainers import (
     render_key_findings_intro,
     render_meaning_section,
@@ -641,6 +642,17 @@ def render_dashboard(results: list[dict[str, Any]]) -> None:
     with metric_col4:
         with st.container(border=True):
             st.metric("Rizika", total_risks)
+
+    diagnostics = summarize_case_diagnostics(results)
+    diag_col1, diag_col2, diag_col3, diag_col4 = st.columns(4)
+    with diag_col1:
+        st.caption(f"Ověřené vazby: {diagnostics['verified_relationships']}")
+    with diag_col2:
+        st.caption(f"Externí vazby: {diagnostics['unverified_external_relationships']}")
+    with diag_col3:
+        st.caption(f"Čeká na IČO: {diagnostics['pending_ico_relationships']}")
+    with diag_col4:
+        st.caption(f"Chyby zdrojů: {diagnostics['source_errors']}")
 
     st.markdown("### Přehled")
     findings = build_top_findings(results)

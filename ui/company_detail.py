@@ -190,7 +190,9 @@ def render_company_detail_section(
                 diagnostics = record.get("relationship_diagnostics") or {}
                 if diagnostics:
                     st.markdown("**Diagnostika vazeb**")
-                    diag_col1, diag_col2, diag_col3 = st.columns(3)
+                    source_diagnostics = record.get("source_diagnostics") or {}
+                    counts = source_diagnostics.get("counts") or {}
+                    diag_col1, diag_col2, diag_col3, diag_col4 = st.columns(4)
                     with diag_col1:
                         st.metric("ARES", diagnostics.get("ares", 0))
                         st.metric("Justice", diagnostics.get("justice", 0))
@@ -200,6 +202,11 @@ def render_company_detail_section(
                     with diag_col3:
                         st.metric("Vynecháno", diagnostics.get("skipped", 0))
                         st.metric("Čeká na IČO", record.get("pending_ico_relationship_count", 0))
+                    with diag_col4:
+                        st.metric("Ověřené", counts.get("verified_relationships", 0))
+                        st.metric("Externí", counts.get("unverified_external_relationships", 0))
+                    for parser_warning in source_diagnostics.get("parser_warnings") or []:
+                        st.warning(parser_warning)
 
             with c2:
                 st.markdown(
