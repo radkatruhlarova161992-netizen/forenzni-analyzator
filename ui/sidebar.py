@@ -67,16 +67,19 @@ def render_app_navigation(results: list[dict[str, Any]]) -> str:
         )
 
         st.markdown("### Stav")
-        total_people = sum(len(record.get("osoby", []) or []) for record in results)
-        total_links = sum(len(record.get("navazane_firmy", []) or []) for record in results)
-        total_risk = sum(len(record.get("risk_flags", []) or []) for record in results)
-        col1, col2 = st.columns(2)
-        with col1:
-            st.metric("Firmy", len(results))
-            st.metric("Osoby", total_people)
-        with col2:
-            st.metric("Vazby", total_links)
-            st.metric("Rizika", total_risk)
+        if results:
+            total_people = sum(len(record.get("osoby", []) or []) for record in results)
+            total_links = sum(len(record.get("navazane_firmy", []) or []) for record in results)
+            total_risk = sum(len(record.get("risk_flags", []) or []) for record in results)
+            col1, col2 = st.columns(2)
+            with col1:
+                st.metric("Firmy", len(results))
+                st.metric("Osoby", total_people)
+            with col2:
+                st.metric("Vazby", total_links)
+                st.metric("Rizika", total_risk)
+        else:
+            st.caption("Připraveno k nové analýze")
 
         if results:
             st.markdown("### Subjekty")
@@ -114,6 +117,10 @@ def render_input_controls() -> tuple[str, bool, int, bool, bool]:
         options=["Jen aktuální", "Aktuální i historické"],
         horizontal=True,
         key="relationship_scope",
+        help=(
+            "Aktuální vazby ukazují dnes platná propojení. "
+            "Historické vazby přidají i dřívější role a spojení z načtených veřejných dat."
+        ),
     )
     include_historical = relationship_scope == "Aktuální i historické"
     expansion_depth = st.selectbox(
@@ -121,6 +128,11 @@ def render_input_controls() -> tuple[str, bool, int, bool, bool]:
         options=[1, 2, 3],
         format_func=lambda value: f"Hloubka {value}",
         key="expansion_depth",
+        help=(
+            "Hloubka 1 hledá přímo navázané subjekty. "
+            "Hloubka 2 přidá navazující firmy o krok dál. "
+            "Hloubka 3 prohledá ještě jednu další úroveň."
+        ),
     )
     auto_include_all_entities_initial = st.checkbox(
         "Pro vazby osob a firem vyber všechny osoby i firmy spojené s firmou",

@@ -126,18 +126,18 @@ def render_landing_sections() -> None:
         </style>
         <div class="firmograf-grid">
           <div class="firmograf-card">
-            <div class="firmograf-card-title">Jak to funguje</div>
+            <div class="firmograf-card-title">🧭 Jak to funguje</div>
             <div class="firmograf-step"><span class="firmograf-icon">1️⃣</span><span>Zadejte IČO</span></div>
             <div class="firmograf-step"><span class="firmograf-icon">2️⃣</span><span>Spusťte analýzu</span></div>
             <div class="firmograf-step"><span class="firmograf-icon">3️⃣</span><span>Prozkoumejte firmy, osoby a vazby</span></div>
           </div>
           <div class="firmograf-card">
-            <div class="firmograf-card-title">Co aplikace umí</div>
-            <div class="firmograf-capability"><span class="firmograf-icon">✅</span><span>Propojené firmy</span></div>
-            <div class="firmograf-capability"><span class="firmograf-icon">✅</span><span>Společné osoby</span></div>
-            <div class="firmograf-capability"><span class="firmograf-icon">✅</span><span>Společné adresy</span></div>
-            <div class="firmograf-capability"><span class="firmograf-icon">✅</span><span>Historické vazby</span></div>
-            <div class="firmograf-capability"><span class="firmograf-icon">✅</span><span>Rizikové signály</span></div>
+            <div class="firmograf-card-title">✨ Co aplikace umí</div>
+            <div class="firmograf-capability"><span class="firmograf-icon">👤</span><span>Osoby</span></div>
+            <div class="firmograf-capability"><span class="firmograf-icon">🏢</span><span>Firmy</span></div>
+            <div class="firmograf-capability"><span class="firmograf-icon">🕸</span><span>Vazby</span></div>
+            <div class="firmograf-capability"><span class="firmograf-icon">📍</span><span>Adresy</span></div>
+            <div class="firmograf-capability"><span class="firmograf-icon">⚠️</span><span>Rizikové signály</span></div>
           </div>
         </div>
         """,
@@ -184,19 +184,19 @@ def render_navigation_buttons() -> None:
     st.markdown("### Kam dál")
     col1, col2, col3, col4 = st.columns(4)
     with col1:
-        if st.button("Zobrazit firmy", use_container_width=True):
+        if st.button("🏢 Zobrazit firmy", use_container_width=True):
             st.session_state["current_screen"] = "🏢 Firmy"
             st.rerun()
     with col2:
-        if st.button("Zobrazit osoby", use_container_width=True):
+        if st.button("👤 Zobrazit osoby", use_container_width=True):
             st.session_state["current_screen"] = "👤 Osoby"
             st.rerun()
     with col3:
-        if st.button("Zobrazit vazby", use_container_width=True):
+        if st.button("🕸 Zobrazit vazby", use_container_width=True):
             st.session_state["current_screen"] = "🕸 Vazby"
             st.rerun()
     with col4:
-        if st.button("Zobrazit rizika", use_container_width=True):
+        if st.button("⚠️ Zobrazit rizika", use_container_width=True):
             st.session_state["current_screen"] = "⚠️ Rizika"
             st.rerun()
 
