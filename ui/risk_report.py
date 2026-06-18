@@ -182,7 +182,7 @@ def render_dashboard(results: list[dict[str, Any]]) -> None:
 
 def render_navigation_buttons() -> None:
     st.markdown("### Kam dál")
-    col1, col2, col3, col4 = st.columns(4)
+    col1, col2, col3, col4, col5 = st.columns(5)
     with col1:
         if st.button("🏢 Zobrazit firmy", use_container_width=True):
             st.session_state["current_screen"] = "🏢 Firmy"
@@ -196,6 +196,10 @@ def render_navigation_buttons() -> None:
             st.session_state["current_screen"] = "🕸 Vazby"
             st.rerun()
     with col4:
+        if st.button("🔗 Zobrazit graf", use_container_width=True):
+            st.session_state["current_screen"] = "🔗 Graf vazeb"
+            st.rerun()
+    with col5:
         if st.button("⚠️ Zobrazit rizika", use_container_width=True):
             st.session_state["current_screen"] = "⚠️ Rizika"
             st.rerun()

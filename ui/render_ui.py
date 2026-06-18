@@ -5,6 +5,7 @@ from typing import Any
 import streamlit as st
 
 from ui.company_detail import render_companies_screen, render_people_screen
+from ui.network_graph import render_graph_screen
 from ui.relationships import render_intersections_screen, render_relationships_screen
 from ui.risk_report import render_case_screen, render_risk_signals_screen
 
@@ -78,6 +79,13 @@ def render_ui(
                 ) = render_intersections_screen(cross_analysis_payload)
         else:
             st.info("Nejprve vyber osoby nebo načti firmy, aby bylo možné zobrazit vazby a průniky.")
+        return actions
+
+    if current_screen == "🔗 Graf vazeb":
+        if relationship_graph:
+            render_graph_screen(results, relationship_graph)
+        else:
+            st.info("Nejprve načti firmy, aby bylo možné zobrazit graf vazeb.")
         return actions
 
     if current_screen == "⚠️ Rizika":

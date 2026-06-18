@@ -23,6 +23,13 @@ DEFAULT_SESSION_STATE: dict[str, Any] = {
     "compare_all_entities_global": False,
     "pending_select_all_entities": False,
     "current_screen": "📊 Přehled",
+    "graph_selected_node_id": None,
+    "graph_zoom_level": 1.0,
+    "graph_show_companies": True,
+    "graph_show_people": True,
+    "graph_show_addresses": True,
+    "graph_show_historical": True,
+    "graph_show_risks": True,
 }
 
 
@@ -61,7 +68,7 @@ def render_app_navigation(results: list[dict[str, Any]]) -> str:
         st.markdown("## Firmograf")
         current_screen = st.radio(
             "Navigace",
-            options=["📊 Přehled", "🏢 Firmy", "👤 Osoby", "🕸 Vazby", "⚠️ Rizika"],
+            options=["📊 Přehled", "🏢 Firmy", "👤 Osoby", "🕸 Vazby", "🔗 Graf vazeb", "⚠️ Rizika"],
             key="current_screen",
             label_visibility="collapsed",
         )
