@@ -10,7 +10,7 @@ from urllib.parse import urljoin
 import requests
 
 from core.config import HEADERS, KURZY_COMPANY_URL, REQUEST_TIMEOUT
-from core.utils import clean_ico
+from core.utils import clean_ico, normalize_name
 from models.relationship_record import RelationshipRecord
 
 KURZY_SOURCE_NAME = "Kurzy.cz"
@@ -146,28 +146,49 @@ def _looks_like_captcha_or_loader(html: str) -> bool:
 
 
 def _dedupe_records(records: list[RelationshipRecord]) -> tuple[list[RelationshipRecord], int]:
+    """
+    Deduplikace záznamů podle:
+    (ico, target_ico, relationship_type, relationship_direction, is_historical, normalized_name)
+    
+    Nevrhá duplikáty stejného IČO, pokud mají jiný typ vztahu.
+    """
     deduped: list[RelationshipRecord] = []
     seen: set[tuple[str, ...]] = set()
     skipped = 0
+    
     for record in records:
         if record.target_ico:
-            signature = ("ico", record.target_ico)
+            signature = (
+                "ico",
+                record.target_ico,
+                record.relationship_type or "",
+                record.relationship_direction or "",
+                str(record.is_historical or False),
+                normalize_name(record.target_entity_name or ""),
+            )
         else:
             signature = (
                 "name_address",
-                _normalize_key(record.target_entity_name),
-                _normalize_key(record.target_address),
+                normalize_name(record.target_entity_name or ""),
+                normalize_name(record.target_address or ""),
+                record.relationship_type or "",
             )
+        
         if signature in seen:
             skipped += 1
             continue
+        
         seen.add(signature)
         deduped.append(record)
+    
     return deduped, skipped
 
 
 def parse_kurzy_relationships(html: str, source_url: str) -> list[dict[str, Any]]:
-    """Vytahne vztahy ze stranky Kurzy bez domysleni chybejicich IČO."""
+    """
+    Vytahne vztahy ze stranky Kurzy.
+    Nezahazuje entity bez IČO - vytvoří je jako kandidáty.
+    """
     records: list[RelationshipRecord] = []
     if not html:
         return []
@@ -198,11 +219,28 @@ def parse_kurzy_relationships(html: str, source_url: str) -> list[dict[str, Any]
         related_ico = _extract_ico_from_href_or_snippet(href, snippet)
         relationship_type = _detect_relationship_type(snippet)
         entity_type = _detect_entity_type(label, relationship_type)
+        
+        # Úkol 7: Nezahazuj unknown entity bez IČO
+        # Místo continue vytvoř kandidátní záznam
         if entity_type == "unknown" and not related_ico:
-            continue
+            # Pokud vypadá jako osoba nebo firma, vezmi to jako kandidáta
+            if len(label.split()) >= 2 or any(
+                marker in _normalize_key(label) 
+                for marker in ("s.r.o", "s. r. o", "a.s", "a. s", "v.o.s", "k.s", "z.s")
+            ):
+                entity_type = "company" if any(
+                    marker in _normalize_key(label) 
+                    for marker in ("s.r.o", "s. r. o", "a.s", "a. s", "v.o.s", "k.s", "z.s")
+                ) else "person"
+            else:
+                continue
 
         status = _extract_status(snippet)
         is_historical = bool(status == "Historická" or relationship_type in {"výmaz", "fúze"})
+        
+        verification_status = "verified_primary" if related_ico else "candidate_needs_resolution"
+        confidence = "high" if related_ico else "low"
+        
         record = RelationshipRecord(
             source_entity_name=None,
             source_ico=None,
@@ -216,10 +254,11 @@ def parse_kurzy_relationships(html: str, source_url: str) -> list[dict[str, Any]
             is_current=not is_historical,
             source_name=KURZY_SOURCE_NAME,
             source_url=source_url,
-            confidence="medium",
-            verification_status="unverified_external",
+            confidence=confidence,
+            verification_status=verification_status,
             raw_evidence=snippet[:600],
-            warnings=["Vazba pochází z veřejného agregátoru a je nutné ji ručně ověřit."],
+            warnings=["Vazba pochází z veřejného agregátoru a je nutné ji ručně ověřit."] +
+                     (["Chybí IČO - vazba vyžaduje ověření."] if not related_ico else []),
         )
         records.append(record)
 
@@ -240,6 +279,7 @@ def fetch_kurzy_relationships(ico: str) -> dict[str, Any]:
             "kurzy_total_deduped": 0,
             "kurzy_skipped_duplicates": 0,
             "kurzy_without_ico": 0,
+            "kurzy_candidate_companies": 0,
             "parser_warnings": [],
         },
         "warnings": [],
@@ -271,12 +311,16 @@ def fetch_kurzy_relationships(ico: str) -> dict[str, Any]:
         raw_rows = parse_kurzy_relationships(html, relationship_url)
         deduped_rows, skipped = _dedupe_legacy_relationships(raw_rows)
         without_ico = len([row for row in deduped_rows if not row.get("ico")])
+        candidate_companies = len([row for row in deduped_rows 
+                                   if not row.get("ico") and row.get("verification_status") == "candidate_needs_resolution"])
+        
         result["relationships"] = deduped_rows
         result["diagnostics"] = {
             "kurzy_total_raw": len(raw_rows),
             "kurzy_total_deduped": len(deduped_rows),
             "kurzy_skipped_duplicates": skipped,
             "kurzy_without_ico": without_ico,
+            "kurzy_candidate_companies": candidate_companies,
             "parser_warnings": parser_warnings,
         }
         result["warnings"] = parser_warnings
@@ -295,21 +339,37 @@ def fetch_kurzy_relationships(ico: str) -> dict[str, Any]:
 
 
 def _dedupe_legacy_relationships(rows: list[dict[str, Any]]) -> tuple[list[dict[str, Any]], int]:
+    """
+    Úkol 6: Oprav deduplikaci - nezahazuj více různých vztahů ke stejné firmě.
+    Deduplikuje podle (ico, type, direction, is_historical, normalized_name).
+    """
     deduped: list[dict[str, Any]] = []
     seen: set[tuple[str, ...]] = set()
     skipped = 0
+    
     for row in rows:
         if row.get("ico"):
-            signature = ("ico", str(row["ico"]))
+            signature = (
+                "ico",
+                str(row["ico"]),
+                row.get("relationship_type") or "",
+                row.get("relationship_direction") or "",
+                str(row.get("is_historical") or False),
+                normalize_name(row.get("firma") or row.get("nazev") or ""),
+            )
         else:
             signature = (
                 "name_address",
-                _normalize_key(row.get("firma") or row.get("nazev")),
-                _normalize_key(row.get("adresa")),
+                normalize_name(row.get("firma") or row.get("nazev") or ""),
+                normalize_name(row.get("adresa") or ""),
+                row.get("relationship_type") or "",
             )
+        
         if signature in seen:
             skipped += 1
             continue
+        
         seen.add(signature)
         deduped.append(row)
+    
     return deduped, skipped
