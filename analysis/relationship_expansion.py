@@ -9,6 +9,11 @@ from analysis.entities import fetch_company_data, normalize_entities
 from analysis.risk import calculate_risk_signals
 from core.utils import clean_ico, normalize_name
 from sources.company_search import search_company_candidates
+from analysis.expansion_helpers import (
+    expand_by_person,
+    expand_by_address,
+    resolve_candidate_company,
+)
 
 MAX_NEW_COMPANIES_PER_SEED = 150
 MAX_TOTAL_ENTITIES = 1000
@@ -30,7 +35,7 @@ def collect_expansion_targets(
 ) -> list[dict[str, Any]]:
     """
     Sbírá cíle k rozšíření sítě (firmy, osoby, adresy) z jednoho záznamu.
-    
+
     Vrací seznam položek:
     {
         "target_type": "company" | "person" | "address",
@@ -50,9 +55,9 @@ def collect_expansion_targets(
     for company in record.get("navazane_firmy", []) or []:
         if not include_external and company.get("verification_status") == "unverified_external":
             continue
-        
+
         ico = clean_ico(str(company.get("ico") or ""))
-        
+
         # Pokud má IČO, přidej firmu
         if ico and ico != source_ico:
             targets.append({
@@ -152,21 +157,22 @@ def _search_companies_by_person_name(
 ) -> list[dict[str, Any]]:
     """
     Hledá firmy, kde se daná osoba objevuje.
-    Používá company_search a vrací kandidáty.
+    Používá expansion_helpers.expand_by_person a vrací kandidáty.
     """
     results: list[dict[str, Any]] = []
-    candidates = search_company_candidates(person_name)
-    
+    candidates = expand_by_person(person_name)
+
     for candidate in candidates:
-        if candidate.get("ico"):
+        ico = candidate.get("ico")
+        if ico:
             results.append({
-                "ico": candidate["ico"],
+                "ico": ico,
                 "confidence": candidate.get("confidence", "low"),
-                "verification_status": "candidate_needs_resolution",
+                "verification_status": candidate.get("verification_status", "candidate_needs_resolution"),
                 "source_name": candidate.get("source_name"),
                 "source_url": candidate.get("source_url") or source_url,
             })
-    
+
     return results
 
 
@@ -174,13 +180,10 @@ def _search_companies_by_address(
     address: str,
 ) -> list[dict[str, Any]]:
     """
-    Hledá firmy na stejné adrese.
-    TODO: Implementovat hledání v ARES/Justice podle adresy.
-    Zatím vrací prázdný seznam.
+    Hledá firmy na stejné adrese pomocí kombinace ARES/ Kurzy/ company_search.
+    Deleguje na analysis.expansion_helpers.expand_by_address.
     """
-    # Toto by mělo být implementováno v budoucnosti
-    # Bude potřebovat API pro hledání firem podle adresy
-    return []
+    return expand_by_address(address)
 
 
 def _search_companies_by_name(
@@ -188,10 +191,11 @@ def _search_companies_by_name(
 ) -> list[dict[str, Any]]:
     """
     Hledá firmu podle názvu a vrací kandidáty s IČO.
+    Používá search_company_candidates jako dříve.
     """
     results: list[dict[str, Any]] = []
     candidates = search_company_candidates(company_name)
-    
+
     for candidate in candidates:
         if candidate.get("ico"):
             results.append({
@@ -202,7 +206,7 @@ def _search_companies_by_name(
                 "source_name": candidate.get("source_name"),
                 "source_url": candidate.get("source_url"),
             })
-    
+
     return results
 
 
@@ -217,7 +221,7 @@ def expand_relationship_network(
 ) -> dict[str, Any]:
     """
     Načte viceurovnovou síť s deduplikací a ochrannými limity.
-    
+
     Fronta nyní podporuje:
     - ("company_ico", ico, None)
     - ("company_name", name, None)
@@ -226,21 +230,21 @@ def expand_relationship_network(
     """
     safe_depth = max(0, min(int(depth or 0), MAX_DEPTH))
     seed_icos = [clean_ico(ico) for ico in seed_icos if clean_ico(ico)]
-    
+
     # Inicializuj frontu s počáteční IČO
     queue: deque[tuple[str, str, int, str | None]] = deque(
         (("company_ico", ico, 0, None) for ico in seed_icos)
     )
-    
+
     seen_icos: set[str] = set()
     seen_people: set[str] = set()
     seen_addresses: set[str] = set()
-    
+
     seed_counts: dict[str, int] = {ico: 0 for ico in seed_icos}
     records: list[dict[str, Any]] = []
     edges: list[dict[str, Any]] = []
     warnings: list[str] = []
-    
+
     # Diagnostika
     diagnostics_data = {
         "processed_companies": 0,
@@ -353,10 +357,10 @@ def expand_relationship_network(
                                 "target_ico": candidate_ico,
                                 "level": level + 1,
                                 "relation_type": f"osoba: {person_full or person_normalized}",
-                                "source_name": None,
-                                "source_url": None,
+                                "source_name": candidate.get("source_name"),
+                                "source_url": candidate.get("source_url"),
                                 "confidence": candidate.get("confidence", "low"),
-                                "verification_status": "candidate_needs_resolution",
+                                "verification_status": candidate.get("verification_status", "candidate_needs_resolution"),
                                 "is_historical": False,
                             })
 
@@ -384,6 +388,17 @@ def expand_relationship_network(
                                 queue_meta,
                             ))
                             diagnostics_data["queued_companies"] += 1
+                            edges.append({
+                                "source_ico": queue_meta if level > 0 else None,
+                                "target_ico": candidate_ico,
+                                "level": level + 1,
+                                "relation_type": f"adresa: {address_raw}",
+                                "source_name": candidate.get("source_name"),
+                                "source_url": candidate.get("source_url"),
+                                "confidence": candidate.get("confidence", "low"),
+                                "verification_status": candidate.get("verification_status", "candidate_needs_resolution"),
+                                "is_historical": False,
+                            })
 
         # Zpracuj targety z aktuálního záznamu
         if queue_type == "company_ico" and level < safe_depth:
