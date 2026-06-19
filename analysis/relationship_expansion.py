@@ -31,7 +31,7 @@ def collect_expansion_targets(
     record: dict[str, Any],
     include_external: bool,
     include_person_expansion: bool = True,
-    include_address_expansion: bool = True,
+    include_address_expansion: bool = False,
 ) -> list[dict[str, Any]]:
     """
     Sbírá cíle k rozšíření sítě (firmy, osoby, adresy) z jednoho záznamu.
@@ -216,7 +216,7 @@ def expand_relationship_network(
     include_external: bool,
     include_historical: bool = False,
     include_person_expansion: bool = True,
-    include_address_expansion: bool = True,
+    include_address_expansion: bool = False,
     force_refresh: bool = False,
 ) -> dict[str, Any]:
     """
