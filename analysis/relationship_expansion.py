@@ -113,6 +113,9 @@ def collect_expansion_targets(
                 })
 
     # 3. Adresy - hledání dalších firem na stejné adrese
+    # Ve výchozím nastavení není expanze adres povolena
+    # (include_address_expansion=False), protože virtuální sídla mohou
+    # obsahovat stovky až tisíce firem bez skutečné vazby.
     if include_address_expansion:
         company_address = record.get("sidlo_raw") or record.get("sidlo")
         if company_address:
